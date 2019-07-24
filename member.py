@@ -8,7 +8,7 @@ import uuid
 
 
 class Member(Resource):
-    def post(self): # stranger sending request
+    def post(self):  # stranger sending request
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
@@ -38,34 +38,29 @@ class Member(Resource):
         }])
 
         # send notif to admins
-        mysqlCon.insertQuery('notificationdata', [{
-            'notificationId': uuid.uuid4(),
-            'targetGroupId': gid,
-            'notificationType': 'pending-new',
-            'exception': [fbc.uid],
-            'notificationData': {},
-        }])
         Notification(
-            mog.exclude(mog.insider, [fbc.uid]),
-            'group-edit',
+            mog.byLevel['admin'],
+            'pending-new',
             data={
                 'groupId': gid,
                 'groupName': 'oldName',
+                'performerUserId': fbc.uid,
                 'performerName': fbc.decoded_token['name'],
             },
-            tag='group-edit-{}'.format(gid),
+            tag='pending-new-{}'.format(gid),
         )
 
-        # poke admins and myself (my other devices)
+        # poke admins to update member
+        # poke requester to update group
         rdbPathUpdate = ['poke/{}/member'.format(u) for u in mog.byLevel['admin']]
         rdbPathUpdate.append('poke/{}/group'.format(fbc.uid))
         fbc.updateRDBTimestamp(rdbPathUpdate)
 
         mysqlCon.db.commit()
 
-        return Group().get(), 201 # update requester's group channel
+        return Group().get(), 201  # update requester's group channel
 
-    def put(self):
+    '''def put(self):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
@@ -142,4 +137,4 @@ class Member(Resource):
                 'level': level,
             }
 
-        return result
+        return result'''

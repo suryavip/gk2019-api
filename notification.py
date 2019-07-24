@@ -2,11 +2,26 @@ from connection import MysqlCon
 import requests
 import threading
 import json
+import uuid
 from privateConfig import PrivateConfig
 
 
 class Notification():
     def __init__(self, targetUser, notifType, data={}, tag=''):
+        mysqlCon = MysqlCon()
+        n = []
+        batchId = uuid.uuid4()
+        for t in targetUser:
+            n.append({
+                'batchId': batchId,
+                'targetUserId': t,
+                'notificationType': notifType,
+                'notificationData': data,
+            })
+        mysqlCon.insertQuery('notificationdata', n)
+
+        mysqlCon.db.commit()
+
         threading.Thread(target=self.push, args=[targetUser, notifType, data, tag]).start()
 
     def translate(self, notifType, langKey, data={}):

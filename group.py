@@ -73,19 +73,13 @@ class Group(Resource):
             abort(400, code='no changes')
 
         # send notif to group except self
-        mysqlCon.insertQuery('notificationdata', [{
-            'notificationId': uuid.uuid4(),
-            'targetGroupId': gid,
-            'notificationType': 'group-edit',
-            'exception': [fbc.uid],
-            'notificationData': {},
-        }])
         Notification(
             mog.exclude(mog.insider, [fbc.uid]),
             'group-edit',
             data={
                 'groupId': gid,
                 'groupName': oldName,
+                'performerUserId': fbc.uid,
                 'performerName': fbc.decoded_token['name'],
             },
             tag='group-edit-{}'.format(gid),
