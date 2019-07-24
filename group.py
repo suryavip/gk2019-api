@@ -91,7 +91,12 @@ class Group(Resource):
             tag='group-edit-{}'.format(gid),
         )
 
-        fbc.updateRDBTimestamp([[gid, 'group']])
+        # poke everybody to update
+        rdbPathUpdate = ['poke/{}/group'.format(u.userId) for u in mog.all]
+        fbc.updateRDBTimestamp(rdbPathUpdate)
+
+        mysqlCon.db.commit()
+
         return self.get()
 
     # there is no DELETE method because group will be deleted once there is no member/admin

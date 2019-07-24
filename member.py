@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup, GroupsOfUser
 from notification import Notification
+from group import Group
 from rules import Rules
 import uuid
 
@@ -40,7 +41,7 @@ class Member(Resource):
         mysqlCon.insertQuery('notificationdata', [{
             'notificationId': uuid.uuid4(),
             'targetGroupId': gid,
-            'notificationType': 'group-edit',
+            'notificationType': 'pending-new',
             'exception': [fbc.uid],
             'notificationData': {},
         }])
@@ -55,11 +56,14 @@ class Member(Resource):
             tag='group-edit-{}'.format(gid),
         )
 
-        fbc.updateRDBTimestamp([[gid, 'group']])
+        # poke admins and myself (my other devices)
+        rdbPathUpdate = ['poke/{}/member'.format(u) for u in mog.byLevel['admin']]
+        rdbPathUpdate.append('poke/{}/group'.format(fbc.uid))
+        fbc.updateRDBTimestamp(rdbPathUpdate)
 
         mysqlCon.db.commit()
 
-        return self.get(), 201
+        return Group().get(), 201 # update requester's group channel
 
     def put(self):
         mysqlCon = MysqlCon()
