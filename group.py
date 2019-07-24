@@ -37,7 +37,7 @@ class Group(Resource):
 
         mysqlCon.db.commit()
 
-        return {}, 201
+        return self.get(), 201
 
     def put(self):
         mysqlCon = MysqlCon()
@@ -91,8 +91,29 @@ class Group(Resource):
             tag='group-edit-{}'.format(gid),
         )
 
-        fbc.updateRDBTimestamp([['group', gid]])
-        return {}
+        fbc.updateRDBTimestamp([[gid, 'group']])
+        return self.get()
 
-    def get(self, gid):
-        return {}
+    # there is no DELETE method because group will be deleted once there is no member/admin
+
+    def get(self):
+        mysqlCon = MysqlCon()
+        parser = reqparse.RequestParser()
+        parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        args = parser.parse_args()
+
+        fbc = FirebaseCon(args['X-idToken'])
+
+        group = mysqlCon.rQuery(
+            'SELECT groupdata.groupId, name, school, level FROM groupdata JOIN memberdata ON groupdata.groupId = memberdata.groupId WHERE memberdata.userId = %s',
+            (fbc.uid,)
+        )
+        result = {}
+        for (groupId, name, school, level) in group:
+            result[groupId] = {
+                'name': name,
+                'school': school,
+                'level': level,
+            }
+
+        return result

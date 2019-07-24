@@ -21,10 +21,11 @@ class FirebaseCon:
         self.auth = auth
         self.storage = storage
 
-    def updateRDBTimestamp(self, typeAndIds):
+    def updateRDBTimestamp(self, idAndChannel):
+        # idAndChannel is 2 dimmension list. each item is list containing id (groupId or userId) and channel
         rdbUpdate = {}
-        for i in typeAndIds:
-            rdbUpdate['{}/{}/lastChange'.format(i[0], i[1])] = {'.sv': 'timestamp'}
+        for i in idAndChannel:
+            rdbUpdate['lastChange/{}/{}'.format(i[0], i[1])] = {'.sv': 'timestamp'}
 
         def doWork():
             ref = self.db.reference('')

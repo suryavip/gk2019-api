@@ -39,7 +39,7 @@ api.add_resource(Test, '/test')
 api.add_resource(User, '/user')
 api.add_resource(Profiles, '/profiles')
 
-# cache channel: /group
+# cache table name (channel): group
 api.add_resource(Group, '/group')
 
 if __name__ == '__main__':
