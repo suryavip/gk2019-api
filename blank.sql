@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 24 Jul 2019 pada 09.46
+-- Waktu pembuatan: 24 Jul 2019 pada 10.45
 -- Versi server: 10.1.34-MariaDB
 -- Versi PHP: 7.2.7
 
@@ -107,7 +107,7 @@ CREATE TABLE `groupdata` (
 CREATE TABLE `memberdata` (
   `groupId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `userId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `status` enum('PENDING','MEMBER','ADMIN') COLLATE utf8mb4_unicode_520_ci NOT NULL
+  `level` enum('pending','member','admin') COLLATE utf8mb4_unicode_520_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
