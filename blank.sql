@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 24 Jul 2019 pada 09.13
+-- Waktu pembuatan: 24 Jul 2019 pada 09.46
 -- Versi server: 10.1.34-MariaDB
 -- Versi PHP: 7.2.7
 
@@ -153,7 +153,8 @@ CREATE TABLE `userdata` (
   `email` varchar(255) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `emailVerified` tinyint(1) NOT NULL DEFAULT '0',
   `registrationTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastSession` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `lastSession` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `school` varchar(50) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 --
