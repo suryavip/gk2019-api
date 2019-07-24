@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 24 Jul 2019 pada 12.14
+-- Waktu pembuatan: 24 Jul 2019 pada 13.49
 -- Versi server: 10.1.34-MariaDB
 -- Versi PHP: 7.2.7
 
@@ -117,12 +117,10 @@ CREATE TABLE `memberdata` (
 --
 
 CREATE TABLE `notificationdata` (
-  `notificationId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `batchId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `targetUserId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
-  `targetGroupId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `notificationType` varchar(255) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `notificationTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `exception` text COLLATE utf8mb4_unicode_520_ci COMMENT 'comma separated multiple userId',
   `notificationData` text COLLATE utf8mb4_unicode_520_ci NOT NULL COMMENT 'in JSON'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
@@ -213,9 +211,9 @@ ALTER TABLE `memberdata`
 -- Indeks untuk tabel `notificationdata`
 --
 ALTER TABLE `notificationdata`
-  ADD PRIMARY KEY (`notificationId`),
-  ADD KEY `targetGroupId` (`targetGroupId`),
-  ADD KEY `targetUserId` (`targetUserId`);
+  ADD KEY `targetUserId` (`targetUserId`),
+  ADD KEY `batchId` (`batchId`),
+  ADD KEY `notificationTime` (`notificationTime`);
 
 --
 -- Indeks untuk tabel `scheduledata`
@@ -266,7 +264,6 @@ ALTER TABLE `memberdata`
 -- Ketidakleluasaan untuk tabel `notificationdata`
 --
 ALTER TABLE `notificationdata`
-  ADD CONSTRAINT `notificationdata_ibfk_1` FOREIGN KEY (`targetGroupId`) REFERENCES `groupdata` (`groupId`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `notificationdata_ibfk_2` FOREIGN KEY (`targetUserId`) REFERENCES `userdata` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
