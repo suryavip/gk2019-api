@@ -3,7 +3,7 @@ from flask import Flask, request
 from flask_restful import Api, Resource
 from privateConfig import PrivateConfig
 
-from user import User, Users
+from user import User, Profiles
 
 app = Flask(__name__, static_url_path='')
 app.secret_key = PrivateConfig.flaskSecretKey
@@ -36,7 +36,7 @@ class Test(Resource):
 api.add_resource(Test, '/test')
 
 api.add_resource(User, '/user')
-api.add_resource(Users, '/users')
+api.add_resource(Profiles, '/profiles')
 
 if __name__ == '__main__':
     app.run(debug=True)

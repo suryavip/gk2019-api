@@ -147,8 +147,8 @@ class User(Resource):
         return {}
 
 
-class Users(Resource):
-    def get(self):  # this is name resolver
+class Profiles(Resource):
+    def get(self):  # this is profile resolver
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
         parser.add_argument('userId', action='append', location='args')
