@@ -56,6 +56,15 @@ class Group(Resource):
         if mog.rStatus != 'admin' and mog.rStatus != 'member':
             abort(400, code='requester is not in group')
 
+        # getting old data
+        oldData = mysqlCon.rQuery(
+            'SELECT name FROM groupdata WHERE groupId = %s',
+            (gid,)
+        )
+        oldName = ''
+        for (name,) in oldData:
+            oldName = name
+
         mysqlCon.wQuery(
             'UPDATE groupdata SET name = %s, school = %s WHERE groupId = %s',
             (args['name'], args['school'], gid)
@@ -76,7 +85,7 @@ class Group(Resource):
             'group-edit',
             data={
                 'groupId': gid,
-                'groupName': oldData['name'],
+                'groupName': oldName,
                 'performerName': fbc.decoded_token['name'],
             },
             tag='group-edit-{}'.format(gid),
