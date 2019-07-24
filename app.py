@@ -5,6 +5,7 @@ from privateConfig import PrivateConfig
 
 from user import User, Profiles
 from group import Group
+from member import Member
 
 app = Flask(__name__, static_url_path='')
 app.secret_key = PrivateConfig.flaskSecretKey
@@ -41,6 +42,9 @@ api.add_resource(Profiles, '/profiles')
 
 # cache table name (channel): group
 api.add_resource(Group, '/group')
+
+# cache channel: member
+api.add_resource(Member, '/member')
 
 if __name__ == '__main__':
     app.run(debug=True)
