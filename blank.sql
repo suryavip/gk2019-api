@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 24 Jul 2019 pada 10.45
+-- Waktu pembuatan: 24 Jul 2019 pada 12.14
 -- Versi server: 10.1.34-MariaDB
 -- Versi PHP: 7.2.7
 
@@ -121,6 +121,7 @@ CREATE TABLE `notificationdata` (
   `targetUserId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `targetGroupId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `notificationType` varchar(255) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `notificationTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `exception` text COLLATE utf8mb4_unicode_520_ci COMMENT 'comma separated multiple userId',
   `notificationData` text COLLATE utf8mb4_unicode_520_ci NOT NULL COMMENT 'in JSON'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
