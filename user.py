@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from privateConfig import PrivateConfig
-from rules import Rules
 from datetime import datetime
 import threading
 import json
@@ -17,9 +16,6 @@ class User(Resource):
         parser.add_argument('school', default=None)
         parser.add_argument('password', required=True, help='password')
         args = parser.parse_args()
-
-        if len(args['school']) > Rules.maxSchoolLength:
-            abort(400, help='school name length')
 
         # regist to firebase
         try:
