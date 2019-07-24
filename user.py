@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from privateConfig import PrivateConfig
+from membership import MembersOfGroup, GroupsOfUser
 from datetime import datetime
 import threading
 import json
@@ -81,24 +82,14 @@ class User(Resource):
         fbc = FirebaseCon(args['X-idToken'])
 
         # set new admin for every group that only admined by this user and still have another member
-        admins = mysqlCon.rQuery(
-            'SELECT groupId FROM memberdata WHERE userId = %s AND level = %s',
-            (fbc.uid, 'admin')
-        )
+        gou = GroupsOfUser(fbc.uid)
         rdbUpdate = {}
-        for (groupId,) in admins:
+        for groupId in gou.byLevel['admin']:
             rdbUpdate['group/{}/lastChange'.format(groupId)] = {'.sv': 'timestamp'}
-            members = mysqlCon.rQuery(
-                'SELECT userId, level FROM memberdata WHERE groupId = %s AND level IS NOT %s',
-                (fbc.uid, 'pending')
-            )
-            byLevel = {'admin': [], 'member': []}
-            for (userId, level) in members:
-                byLevel[level].append(userId)
-            # deciding...
-            if len(byLevel['admin']) > 1:
+            mog = MembersOfGroup(groupId, fbc.uid)
+            if len(mog.byLevel['admin']) > 1:
                 continue
-            if len(byLevel['member']) == 0:
+            if len(mog.byLevel['member']) == 0:
                 # no one left on group, just this user, which will delete account
                 # delete group
                 mysqlCon.wQuery('DELETE FROM groupdata WHERE groupId = %s', (groupId,))
@@ -109,7 +100,7 @@ class User(Resource):
                 # set new admin (pick first member)
                 mysqlCon.wQuery(
                     'UPDATE memberdata SET level = %s WHERE userId = %s AND groupId = %s',
-                    ('admin', groupId, 'member', byLevel['member'][0])
+                    ('admin', groupId, 'member', mog.byLevel['member'][0])
                 )
 
         # backup deleted user data

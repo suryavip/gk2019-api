@@ -4,6 +4,7 @@ from flask_restful import Api, Resource
 from privateConfig import PrivateConfig
 
 from user import User, Profiles
+from group import Group
 
 app = Flask(__name__, static_url_path='')
 app.secret_key = PrivateConfig.flaskSecretKey
@@ -37,6 +38,9 @@ api.add_resource(Test, '/test')
 
 api.add_resource(User, '/user')
 api.add_resource(Profiles, '/profiles')
+
+# cache channel: /group
+api.add_resource(Group, '/group')
 
 if __name__ == '__main__':
     app.run(debug=True)

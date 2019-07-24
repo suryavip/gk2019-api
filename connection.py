@@ -2,6 +2,7 @@ from flask_restful import abort
 from firebase_admin import db, auth, storage
 from privateConfig import PrivateConfig
 import mysql.connector
+import threading
 import socket
 hostname = socket.gethostname()
 
@@ -19,6 +20,16 @@ class FirebaseCon:
         self.db = db
         self.auth = auth
         self.storage = storage
+
+    def updateRDBTimestamp(self, typeAndIds):
+        rdbUpdate = {}
+        for i in typeAndIds:
+            rdbUpdate['{}/{}/lastChange'.format(i[0], i[1])] = {'.sv': 'timestamp'}
+
+        def doWork():
+            ref = self.db.reference('')
+            ref.update(rdbUpdate)
+        threading.Thread(target=doWork, args=[]).start()
 
 
 class MysqlCon:
