@@ -3,6 +3,7 @@ from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup, GroupsOfUser
 from notification import Notification
 from rules import Rules
+from util import getGroupName
 import uuid
 
 
@@ -56,15 +57,6 @@ class Group(Resource):
         if mog.rStatus != 'admin' and mog.rStatus != 'member':
             abort(400, code='requester is not in group')
 
-        # getting old data
-        oldData = mysqlCon.rQuery(
-            'SELECT name FROM groupdata WHERE groupId = %s',
-            (gid,)
-        )
-        oldName = ''
-        for (name,) in oldData:
-            oldName = name
-
         mysqlCon.wQuery(
             'UPDATE groupdata SET name = %s, school = %s WHERE groupId = %s',
             (args['name'], args['school'], gid)
@@ -72,13 +64,13 @@ class Group(Resource):
         if mysqlCon.cursor.rowcount < 1:
             abort(400, code='no changes')
 
-        # send notif to group except self
+        # send notif to insider except self
         Notification(
             mog.exclude(mog.insider, [fbc.uid]),
             'group-edit',
             data={
                 'groupId': gid,
-                'groupName': oldName,
+                'groupName': getGroupName(mysqlCon, gid),
                 'performerUserId': fbc.uid,
                 'performerName': fbc.decoded_token['name'],
             },
