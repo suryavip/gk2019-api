@@ -36,6 +36,9 @@ class Group(Resource):
             'level': 'admin',
         }])
 
+        rdbPathUpdate = ['poke/{}/group'.format(fbc.uid), 'poke/{}/member'.format(fbc.uid)]
+        fbc.updateRDBTimestamp(rdbPathUpdate)
+
         mysqlCon.db.commit()
 
         return self.get(), 201
