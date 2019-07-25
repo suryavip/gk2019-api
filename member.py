@@ -59,7 +59,7 @@ class Member(Resource):
 
         mysqlCon.db.commit()
 
-        return Group().get(), 201  # update requester's group channel
+        return Group().get(), 201  # update requester's group channel. no need to update requester member channel, because there will be no update since memberdata only given to insider
 
     def put(self):  # accept pending, promote member, demote admin
         mysqlCon = MysqlCon()
@@ -154,7 +154,7 @@ class Member(Resource):
 
         mysqlCon.db.commit()
 
-        return {}
+        return self.get()
 
     def delete(self):  # cancel pending, delete member or delete admin
         mysqlCon = MysqlCon()
@@ -235,64 +235,7 @@ class Member(Resource):
 
         mysqlCon.db.commit()
 
-        return {}
-
-    '''def put(self):
-        mysqlCon = MysqlCon()
-        parser = reqparse.RequestParser()
-        parser.add_argument('X-idToken', required=True, help='a', location='headers')
-        parser.add_argument('groupId', required=True, help='groupId')
-        parser.add_argument('name', required=True, help='name')
-        parser.add_argument('school', default=None)
-        args = parser.parse_args()
-
-        fbc = FirebaseCon(args['X-idToken'])
-        gid = args['groupId']
-
-        # check privilege
-        mog = MembersOfGroup(gid, fbc.uid)
-        if mog.rStatus != 'admin' and mog.rStatus != 'member':
-            abort(400, code='requester is not in group')
-
-        # getting old data
-        oldData = mysqlCon.rQuery(
-            'SELECT name FROM groupdata WHERE groupId = %s',
-            (gid,)
-        )
-        oldName = ''
-        for (name,) in oldData:
-            oldName = name
-
-        mysqlCon.wQuery(
-            'UPDATE groupdata SET name = %s, school = %s WHERE groupId = %s',
-            (args['name'], args['school'], gid)
-        )
-        if mysqlCon.cursor.rowcount < 1:
-            abort(400, code='no changes')
-
-        # send notif to group except self
-        mysqlCon.insertQuery('notificationdata', [{
-            'notificationId': uuid.uuid4(),
-            'targetGroupId': gid,
-            'notificationType': 'group-edit',
-            'exception': [fbc.uid],
-            'notificationData': {},
-        }])
-        Notification(
-            mog.exclude(mog.insider, [fbc.uid]),
-            'group-edit',
-            data={
-                'groupId': gid,
-                'groupName': oldName,
-                'performerName': fbc.decoded_token['name'],
-            },
-            tag='group-edit-{}'.format(gid),
-        )
-
-        fbc.updateRDBTimestamp([[gid, 'group']])
         return self.get()
-
-    # there is no DELETE method because group will be deleted once there is no member/admin
 
     def get(self):
         mysqlCon = MysqlCon()
@@ -303,15 +246,14 @@ class Member(Resource):
         fbc = FirebaseCon(args['X-idToken'])
 
         group = mysqlCon.rQuery(
-            'SELECT groupdata.groupId, name, school, level FROM groupdata JOIN memberdata ON groupdata.groupId = memberdata.groupId WHERE memberdata.userId = %s',
-            (fbc.uid,)
+            'SELECT groupId, userId, level FROM memberdata WHERE userId = %s AND level IN (%s, %s)',
+            (fbc.uid, 'admin', 'member')
         )
+        # don't return memberdata where this requester still pending
         result = {}
-        for (groupId, name, school, level) in group:
-            result[groupId] = {
-                'name': name,
-                'school': school,
-                'level': level,
-            }
+        for (groupId, userId, level) in group:
+            if groupId not in result:
+                result[groupId] = {}
+            result[groupId][userId] = level
 
-        return result'''
+        return result
