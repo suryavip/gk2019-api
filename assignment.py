@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup
 from notification import Notification
-from util import getGroupName, getSingleField, verifyDate, validateAttachment
+from util import getGroupName, getSingleField, verifyDate, validateAttachment, updateAttachment
 import uuid
 
 
@@ -50,14 +50,7 @@ class Assignment(Resource):
         }])
 
         # store attachments
-        attachmentdata = [{
-            'attachmentId': a['attachmentId'],
-            ownerCol: owner,
-            'assignmentId': aid,
-            'originalFilename': a['originalFilename'],
-        } for a in args['attachments']]
-        if len(attachmentdata) > 0:
-            mysqlCon.insertQuery('attachmentdata', attachmentdata)
+        updateAttachment(mysqlCon, args['attachments'], ownerCol, owner, 'assignmentId', aid)
 
         rdbPathUpdate = []
         if len(mog.all) > 0:
@@ -92,10 +85,13 @@ class Assignment(Resource):
         parser.add_argument('assignmentId', required=True, help='assignmentId')
         parser.add_argument('dueDate', required=True, help='dueDate')
         parser.add_argument('note', default=None)
+        parser.add_argument('attachments', default=[], type=list)
         args = parser.parse_args()
 
         if verifyDate(args['dueDate']) != True:
             abort(400, code='invalid dueDate format')
+        if validateAttachment(args['attachments']) != True:
+            abort(400, code='invalid attachments')
 
         fbc = FirebaseCon(args['X-idToken'])
 
@@ -117,18 +113,10 @@ class Assignment(Resource):
         )
         count = mysqlCon.cursor.rowcount
 
-        # store attachments
-        # TODO: find deleted attachments
-        attachmentdata = [{
-            'attachmentId': a['attachmentId'],
-            ownerCol: owner,
-            'assignmentId': aid,
-            'originalFilename': a['originalFilename'],
-        } for a in args['attachments']]
-        if len(attachmentdata) > 0:
-            mysqlCon.insertQuery('attachmentdata', attachmentdata, updateOnDuplicate=True)
-
+        # update attachments
+        updateAttachment(mysqlCon, args['attachments'], ownerCol, owner, 'assignmentId', aid)
         count += mysqlCon.cursor.rowcount
+
         if count < 1:
             abort(400, code='no changes')
 
@@ -184,6 +172,9 @@ class Assignment(Resource):
             'DELETE FROM assignmentdata WHERE assignmentId = %s AND {} = %s'.format(ownerCol),
             (args['assignmentId'], owner)
         )
+
+        # delete attachment
+        updateAttachment(mysqlCon, [], ownerCol, owner, 'assignmentId', aid)
 
         rdbPathUpdate = []
         if len(mog.all) > 0:

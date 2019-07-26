@@ -2,6 +2,7 @@ def getGroupName(mysqlCon, gid):
     # getting old data
     return getSingleField(mysqlCon, 'name', 'groupdata', 'groupId', gid)
 
+
 def getSingleField(mysqlCon, colName, tableName, idColName, rowId, default=''):
     # getting old data
     d = mysqlCon.rQuery(
@@ -12,6 +13,7 @@ def getSingleField(mysqlCon, colName, tableName, idColName, rowId, default=''):
         return a
     return default
 
+
 def verifyTime(timeInput):
     # verify if HH:MM format (isoformat without sec and microsec)
     try:
@@ -20,6 +22,7 @@ def verifyTime(timeInput):
     except:
         return False
     return timeInput == timeV
+
 
 def verifyDate(dateInput):
     # verify if YYYY-MM-DD format (isoformat)
@@ -30,6 +33,7 @@ def verifyDate(dateInput):
         return False
     return dateInput == dateV
 
+
 def validateAttachment(attachment):
     # all attachment must be dictionary containing originalFilename (optional for rename on download) and attachmentId (required)
     # attachmentId is filename on firebase storage
@@ -37,10 +41,36 @@ def validateAttachment(attachment):
     for a in attachment:
         if isinstance(a, dict) != True:
             return False
-            
+
         if 'attachmentId' not in a:
             return False
         if isinstance(a['attachmentId'], str) != True:
             return False
 
     return True
+
+
+def updateAttachment(mysqlCon, new, ownerCol, owner, parentColName, parentId):
+    c = mysqlCon.rQuery(
+        'SELECT attachmentId FROM attachmentdata WHERE {} = %s'.format(parentColName),
+        (parentId,)
+    )
+    deleted = [aid for (aid,) in c if aid not in new]
+    
+    if len(deleted) > 0:
+        q = ['%s'] * len(deleted)
+        q = ','.join(q)
+        mysqlCon.wQuery(
+            'UPDATE attachmentdata SET deleted = 1 WHERE attachmentId IN ({})'.format(q),
+            tuple(deleted)
+        )
+
+    attachmentdata = [{
+        'attachmentId': a['attachmentId'],
+        ownerCol: owner,
+        parentColName: parentId,
+        'originalFilename': a['originalFilename'],
+    } for a in new]
+
+    if len(attachmentdata) > 0:
+        mysqlCon.insertQuery('attachmentdata', attachmentdata, updateOnDuplicate=True)
