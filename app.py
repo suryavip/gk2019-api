@@ -42,13 +42,14 @@ api.add_resource(User, '/user')
 api.add_resource(Profiles, '/profiles')
 
 # cache table name (channel): group
+# only group channel that not need for groupId/userId
 api.add_resource(Group, '/group')
 
-# cache channel: member
-api.add_resource(Member, '/member')
+# cache channel: member/<gid>
+api.add_resource(Member, '/member/<string:gid>')
 
-# cache channel: schedule
-api.add_resource(Schedule, '/schedule')
+# cache channel: schedule/<owner>
+api.add_resource(Schedule, '/schedule/<string:owner>')
 
 if __name__ == '__main__':
     app.run(debug=True)

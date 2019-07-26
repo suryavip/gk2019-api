@@ -8,17 +8,22 @@ import uuid
 
 
 class Schedule(Resource):
-    def post(self):  # stranger sending request
+    def put(self, gid):  # edit schedule
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
-        parser.add_argument('groupId', required=True, help='groupId')
+        parser.add_argument('groupId', default=None)
         parser.add_argument('day', required=True, help='day', type=int)
         parser.add_argument('data', required=True, help='data', type=list)
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
-        gid = args['groupId']
+
+        if args['day'] not in range(7):
+            abort(400, code='invalid scheduleId')
+
+        owner = fbc.uid if args['groupId'] == None else args['groupId']
+        scheduleId = '{}schedule{}'.format(owner, args['day'])
 
         # check for group joined limit
         gou = GroupsOfUser(fbc.uid)

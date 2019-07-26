@@ -9,15 +9,13 @@ import uuid
 
 
 class Member(Resource):
-    def post(self):  # stranger sending request
+    def post(self, gid):  # stranger sending request
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
-        parser.add_argument('groupId', required=True, help='groupId')
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
-        gid = args['groupId']
 
         # check for group joined limit
         gou = GroupsOfUser(fbc.uid)
@@ -53,7 +51,7 @@ class Member(Resource):
 
         # poke admins to update member
         # poke requester to update group
-        rdbPathUpdate = ['poke/{}/member'.format(u) for u in mog.byLevel['admin']]
+        rdbPathUpdate = ['poke/{}/member/{}'.format(u, gid) for u in mog.byLevel['admin']]
         rdbPathUpdate.append('poke/{}/group'.format(fbc.uid))
         fbc.updateRDBTimestamp(rdbPathUpdate)
 
@@ -61,16 +59,14 @@ class Member(Resource):
 
         return Group().get(), 201  # update requester's group channel. no need to update requester member channel, because there will be no update since memberdata only given to insider
 
-    def put(self):  # accept pending, promote member, demote admin
+    def put(self, gid):  # accept pending, promote member, demote admin
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
-        parser.add_argument('groupId', required=True, help='groupId')
         parser.add_argument('userId', default=None)
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
-        gid = args['groupId']
         target = fbc.uid if 'userId' not in args else args['userId']
 
         # check privilege
@@ -96,10 +92,10 @@ class Member(Resource):
         )
 
         rdbPathUpdate = ['poke/{}/group'.format(u) for u in mog.insider]
-        rdbPathUpdate += ['poke/{}/member'.format(u) for u in mog.insider]
+        rdbPathUpdate += ['poke/{}/member/{}'.format(u, gid) for u in mog.insider]
         if mog.tStatus == 'pending':
             rdbPathUpdate.append('poke/{}/group'.format(target))
-            rdbPathUpdate.append('poke/{}/member'.format(target))
+            rdbPathUpdate.append('poke/{}/member/{}'.format(target, gid))
 
         # sending notif
         notifData = {
@@ -154,18 +150,16 @@ class Member(Resource):
 
         mysqlCon.db.commit()
 
-        return self.get()
+        return self.get(gid)
 
-    def delete(self):  # cancel pending, delete member or delete admin
+    def delete(self, gid):  # cancel pending, delete member or delete admin
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
-        parser.add_argument('groupId', required=True, help='groupId')
         parser.add_argument('userId', default=None)
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
-        gid = args['groupId']
         target = fbc.uid if 'userId' not in args else args['userId']
 
         # check privilege
@@ -187,15 +181,20 @@ class Member(Resource):
         if mog.tStatus == 'admin' and len(mog.insider) == 1:  # the only left. destroy this group
             mysqlCon.wQuery('DELETE FROM groupdata WHERE groupId = %s', (gid,))
             rdbPathUpdate.append('poke/{}/group'.format(target))
-            rdbPathUpdate.append('poke/{}/member'.format(target))
+            rdbPathUpdate.append('poke/{}/member/{}'.format(target, gid))
+            # pending should get poked since pending wont be in part of equation of insider == 1
+            rdbPathUpdate += ['poke/{}/group'.format(u) for u in mog.byLevel['pending']]
         else:
             mysqlCon.wQuery(
                 'DELETE FROM memberdata WHERE groupId = %s AND userId = %s',
                 (gid, target)
             )
-            rdbPathUpdate += ['poke/{}/member'.format(u) for u in mog.insider]
             if mog.tStatus == 'pending':  # so rejected user will update his group data channel
                 rdbPathUpdate.append('poke/{}/group'.format(target))
+                # update only admin since only admin get updated when this pending send request
+                rdbPathUpdate += ['poke/{}/member/{}'.format(u, gid) for u in mog.byLevel['admin']]
+            else:
+                rdbPathUpdate += ['poke/{}/member/{}'.format(u, gid) for u in mog.insider]
 
         notifData = {
             'groupId': gid,
@@ -235,25 +234,23 @@ class Member(Resource):
 
         mysqlCon.db.commit()
 
-        return self.get()
+        return self.get(gid)
 
-    def get(self):
-        mysqlCon = MysqlCon()
+    def get(self, gid):
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
 
-        group = mysqlCon.rQuery(
-            'SELECT groupId, userId, level FROM memberdata WHERE userId = %s AND level IN (%s, %s)',
-            (fbc.uid, 'admin', 'member')
-        )
-        # don't return memberdata where this requester still pending
+        mog = MembersOfGroup(gid, fbc.uid)
+        if mog.rStatus != 'admin' and mog.rStatus != 'member':
+            abort(400, code='requester is not insider')
+
         result = {}
-        for (groupId, userId, level) in group:
-            if groupId not in result:
-                result[groupId] = {}
-            result[groupId][userId] = level
+        for i in mog.all:
+            if mog.rStatus == 'member' and i.level == 'pending':
+                continue
+            result[i.userId] = i.level
 
         return result

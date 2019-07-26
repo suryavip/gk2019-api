@@ -4,3 +4,5 @@ a = {
 }
 for b in a:
     print(b)
+
+print(6 in range(7))
