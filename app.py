@@ -5,6 +5,7 @@ from privateConfig import PrivateConfig
 
 from user import User, Profiles
 from fcmToken import FCMToken
+from maintenance import CleanUp
 
 from group import Group
 from member import Member
@@ -41,6 +42,8 @@ class Test(Resource):
 
 
 api.add_resource(Test, '/test')
+
+api.add_resource(CleanUp, '/maintenance/cleanup')
 
 api.add_resource(User, '/user')
 api.add_resource(Profiles, '/profiles')
