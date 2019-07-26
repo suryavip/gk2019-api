@@ -4,6 +4,8 @@ from flask_restful import Api, Resource
 from privateConfig import PrivateConfig
 
 from user import User, Profiles
+from fcmToken import FCMToken
+
 from group import Group
 from member import Member
 from schedule import Schedule
@@ -42,6 +44,8 @@ api.add_resource(Test, '/test')
 
 api.add_resource(User, '/user')
 api.add_resource(Profiles, '/profiles')
+
+api.add_resource(FCMToken, '/fcmToken')
 
 # cache table name (channel): group
 # only group channel that not need for groupId/userId
