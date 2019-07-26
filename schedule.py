@@ -84,15 +84,23 @@ class Schedule(Resource):
 
         fbc = FirebaseCon(args['X-idToken'])
 
-        group = mysqlCon.rQuery(
-            'SELECT groupId, userId, level FROM memberdata WHERE userId = %s AND level IN (%s, %s)',
-            (fbc.uid, 'admin', 'member')
+        mog = MembersOfGroup(owner, fbc.uid)
+
+        # check for valid privilege (only if owner is groupId)
+        if len(mog.all) > 0:
+            ownerCol = 'ownerGroupId'
+            if mog.rStatus != 'admin' and mog.rStatus != 'member':
+                abort(400, code='requester is not in group')
+        else:
+            ownerCol = 'ownerUserId'
+
+        schedule = mysqlCon.rQuery(
+            'SELECT scheduleId, data FROM scheduledata WHERE {} = %s'.format(ownerCol),
+            (owner,)
         )
-        # don't return memberdata where this requester still pending
+        
         result = {}
-        for (groupId, userId, level) in group:
-            if groupId not in result:
-                result[groupId] = {}
-            result[groupId][userId] = level
+        for (scheduleId, data) in schedule:
+            result[scheduleId] = data
 
         return result
