@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup
 from notification import Notification
-from util import getGroupName, getSingleField, verifyDate, verifyTime
+from util import getGroupName, getSingleField, verifyDate, verifyTime, validateAttachment, updateAttachment
 import uuid
 
 
@@ -18,6 +18,7 @@ class Exam(Resource):
         parser.add_argument('examDate', required=True, help='examDate')
         parser.add_argument('examTime', default=None)
         parser.add_argument('note', default=None)
+        parser.add_argument('attachments', default=[], type=list)
         args = parser.parse_args()
 
         if len(args['subject']) < 1:
@@ -26,6 +27,8 @@ class Exam(Resource):
             abort(400, code='invalid examDate format')
         if args['examTime'] != None and verifyTime(args['examTime']) != True:
             abort(400, code='invalid examTime format')
+        if validateAttachment(args['attachments']) != True:
+            abort(400, code='invalid attachments')
 
         fbc = FirebaseCon(args['X-idToken'])
 
@@ -49,6 +52,9 @@ class Exam(Resource):
             'examTime': args['examTime'],
             'note': args['note'],
         }])
+
+        # store attachments
+        updateAttachment(mysqlCon, args['attachments'], ownerCol, owner, 'examId', eid)
 
         rdbPathUpdate = []
         if len(mog.all) > 0:
@@ -84,12 +90,15 @@ class Exam(Resource):
         parser.add_argument('examDate', required=True, help='examDate')
         parser.add_argument('examTime', default=None)
         parser.add_argument('note', default=None)
+        parser.add_argument('attachments', default=[], type=list)
         args = parser.parse_args()
 
         if verifyDate(args['examDate']) != True:
             abort(400, code='invalid examDate format')
         if args['examTime'] != None and verifyTime(args['examTime']) != True:
             abort(400, code='invalid examTime format')
+        if validateAttachment(args['attachments']) != True:
+            abort(400, code='invalid attachments')
 
         fbc = FirebaseCon(args['X-idToken'])
 
@@ -109,7 +118,13 @@ class Exam(Resource):
             'UPDATE examdata SET examDate = %s, examTime = %s, note = %s WHERE examId = %s AND {} = %s'.format(ownerCol),
             (args['examDate'], args['examTime'], args['note'], eid, owner)
         )
-        if mysqlCon.cursor.rowcount < 1:
+        count = mysqlCon.cursor.rowcount
+
+        # update attachments
+        updateAttachment(mysqlCon, args['attachments'], ownerCol, owner, 'examId', eid)
+        count += mysqlCon.cursor.rowcount
+
+        if count < 1:
             abort(400, code='no changes')
 
         rdbPathUpdate = []
@@ -165,6 +180,9 @@ class Exam(Resource):
             (args['examId'], owner)
         )
 
+        # delete attachment
+        updateAttachment(mysqlCon, [], ownerCol, owner, 'examId', eid)
+
         rdbPathUpdate = []
         if len(mog.all) > 0:
             # send notif to insider except self
@@ -176,7 +194,7 @@ class Exam(Resource):
                     'groupName': getGroupName(mysqlCon, owner),
                     'performerUserId': fbc.uid,
                     'performerName': fbc.decoded_token['name'],
-                    'assignmentId': eid,
+                    'examId': eid,
                     'subject': subject,
                 },
                 tag='exam-delete-{}'.format(eid),
@@ -220,6 +238,20 @@ class Exam(Resource):
                 'examDate': examDate,
                 'examTime': examTime,
                 'note': note,
+                'attachment': [],
             }
+
+        q = ['%s'] * len(result.keys())
+        q = ','.join(q)
+        attachment = mysqlCon.rQuery(
+            'SELECT attachmentId, originalFilename, examId FROM attachmentdata WHERE examId IN ({})'.format(q),
+            tuple(result.keys())
+        )
+
+        for (attachmentId, originalFilename, examId) in attachment:
+            result[examId]['attachment'].append({
+                'attachmentId': attachmentId,
+                'originalFilename': originalFilename,
+            })
 
         return result
