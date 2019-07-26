@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 26 Jul 2019 pada 07.16
+-- Waktu pembuatan: 26 Jul 2019 pada 07.25
 -- Versi server: 10.1.34-MariaDB
 -- Versi PHP: 7.2.7
 
@@ -95,7 +95,7 @@ CREATE TABLE `fcmtoken` (
 CREATE TABLE `groupdata` (
   `groupId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `name` varchar(20) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `school` varchar(50) COLLATE utf8mb4_unicode_520_ci NOT NULL
+  `school` varchar(50) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
