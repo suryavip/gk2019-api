@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 26 Jul 2019 pada 03.05
+-- Waktu pembuatan: 26 Jul 2019 pada 07.01
 -- Versi server: 10.1.34-MariaDB
 -- Versi PHP: 7.2.7
 
@@ -34,7 +34,7 @@ CREATE TABLE `assignmentdata` (
   `ownerGroupId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `subject` varchar(50) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `dueDate` date NOT NULL,
-  `note` text COLLATE utf8mb4_unicode_520_ci NOT NULL
+  `note` text COLLATE utf8mb4_unicode_520_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
@@ -64,9 +64,9 @@ CREATE TABLE `examdata` (
   `ownerUserId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `ownerGroupId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `subject` varchar(50) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `date` date NOT NULL,
-  `time` time NOT NULL,
-  `note` text COLLATE utf8mb4_unicode_520_ci NOT NULL
+  `examDate` date NOT NULL,
+  `examTime` time DEFAULT NULL,
+  `note` text COLLATE utf8mb4_unicode_520_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
