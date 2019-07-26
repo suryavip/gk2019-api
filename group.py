@@ -16,6 +16,9 @@ class Group(Resource):
         parser.add_argument('school', default=None)
         args = parser.parse_args()
 
+        if len(args['name']) < 1:
+            abort(400, code='name is required')
+
         fbc = FirebaseCon(args['X-idToken'])
 
         # check for group joined limit
@@ -51,6 +54,9 @@ class Group(Resource):
         parser.add_argument('name', required=True, help='name')
         parser.add_argument('school', default=None)
         args = parser.parse_args()
+
+        if len(args['name']) < 1:
+            abort(400, code='name is required')
 
         fbc = FirebaseCon(args['X-idToken'])
         gid = args['groupId']
