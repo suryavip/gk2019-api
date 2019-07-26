@@ -16,3 +16,12 @@ def verifyTime(timeInput):
     except:
         return False
     return timeInput == timeV
+
+def verifyDate(dateInput):
+    # verify if YYYY-MM-DD format (isoformat)
+    try:
+        dateIn = dateInput.split('-')
+        dateV = date(int(dateIn[0]), int(dateIn[1]), int(dateIn[2])).isoformat()
+    except:
+        return False
+    return dateInput == dateV
