@@ -17,9 +17,8 @@ class Schedule(Resource):
 
         fbc = FirebaseCon(args['X-idToken'])
 
+        # check for valid privilege
         mog = MembersOfGroup(owner, fbc.uid)
-
-        # check for valid privilege (only if owner is groupId)
         if len(mog.all) > 0:
             ownerCol = 'ownerGroupId'
             if mog.rStatus != 'admin' and mog.rStatus != 'member':
@@ -82,9 +81,8 @@ class Schedule(Resource):
 
         fbc = FirebaseCon(args['X-idToken'])
 
+        # check for valid privilege
         mog = MembersOfGroup(owner, fbc.uid)
-
-        # check for valid privilege (only if owner is groupId)
         if len(mog.all) > 0:
             ownerCol = 'ownerGroupId'
             if mog.rStatus != 'admin' and mog.rStatus != 'member':

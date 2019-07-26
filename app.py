@@ -7,6 +7,7 @@ from user import User, Profiles
 from group import Group
 from member import Member
 from schedule import Schedule
+from assignment import Assignment
 
 app = Flask(__name__, static_url_path='')
 app.secret_key = PrivateConfig.flaskSecretKey
@@ -50,6 +51,9 @@ api.add_resource(Member, '/member/<string:gid>')
 
 # cache channel: schedule/<owner>
 api.add_resource(Schedule, '/schedule/<string:owner>')
+
+# cache channel: assignment/<owner>
+api.add_resource(Assignment, '/assignment/<string:owner>')
 
 if __name__ == '__main__':
     app.run(debug=True)

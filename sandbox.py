@@ -1,6 +1,8 @@
+zKey = 'z'
 a = {
     'a': 'aaa',
     'b': 'bbb',
+    zKey: 'zzz',
 }
 for b in a:
     print(b)
