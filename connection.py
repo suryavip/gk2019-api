@@ -77,7 +77,7 @@ class MysqlCon:
                 'param': param,
             })
 
-    def insertQuery(self, tableName, data, errorHandler={}):
+    def insertQuery(self, tableName, data, updateOnDuplicate=False, errorHandler={}):
         cols = data[0].keys()
 
         colsQ = ['%s'] * len(cols)
@@ -86,13 +86,18 @@ class MysqlCon:
         valsQ = ['({})'.format(colsQ)] * len(data)
         valsQ = ','.join(valsQ)
 
-        vals = [tableName] + [c for c in cols]
+        vals = [c for c in cols]
         for r in data:
             for c in r:
                 vals.append(r[c])
 
+        query = "INSERT INTO {} ({}) VALUES {}".format(tableName, colsQ, valsQ)
+        if updateOnDuplicate == True:
+            dupQ = ['{} = VALUES({})'.format(c, c) for c in cols]
+            query = "INSERT INTO {} ({}) VALUES {} ON DUPLICATE KEY UPDATE {}".format(tableName, colsQ, valsQ, dupQ)
+
         return self.wQuery(
-            "INSERT INTO %s ({}) VALUES {}".format(colsQ, valsQ),
+            query,
             tuple(vals),
             errorHandler
         )
