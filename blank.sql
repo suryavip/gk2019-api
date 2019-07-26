@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 24 Jul 2019 pada 13.49
+-- Waktu pembuatan: 26 Jul 2019 pada 03.05
 -- Versi server: 10.1.34-MariaDB
 -- Versi PHP: 7.2.7
 
@@ -134,10 +134,7 @@ CREATE TABLE `scheduledata` (
   `scheduleId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `ownerUserId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `ownerGroupId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
-  `day` int(11) NOT NULL,
-  `time` time NOT NULL,
-  `length` int(11) NOT NULL COMMENT 'in minutes',
-  `subject` varchar(50) COLLATE utf8mb4_unicode_520_ci NOT NULL
+  `data` text COLLATE utf8mb4_unicode_520_ci NOT NULL COMMENT 'in JSON'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
