@@ -29,3 +29,18 @@ def verifyDate(dateInput):
     except:
         return False
     return dateInput == dateV
+
+def validateAttachment(attachment):
+    # all attachment must be dictionary containing originalFilename (optional for rename on download) and attachmentId (required)
+    # attachmentId is filename on firebase storage
+    # on firebase, file are stored with this path: attachment/${attachmentId}
+    for a in attachment:
+        if isinstance(a, dict) != True:
+            return False
+            
+        if 'attachmentId' not in a:
+            return False
+        if isinstance(a['attachmentId'], str) != True:
+            return False
+
+    return True
