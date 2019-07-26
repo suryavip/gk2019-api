@@ -96,7 +96,7 @@ class Schedule(Resource):
             'SELECT scheduleId, data FROM scheduledata WHERE {} = %s'.format(ownerCol),
             (owner,)
         )
-        
+
         result = {}
         for (scheduleId, data) in schedule:
             result[scheduleId] = data
