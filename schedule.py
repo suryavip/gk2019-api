@@ -36,7 +36,7 @@ class Schedule(Resource):
         for i in args['data']:
             if 'subject' not in i or 'time' not in i or 'length' not in i:
                 abort(400, code='invalid data')
-            if isinstance(i['subject'], str) != True:
+            if isinstance(i['subject'], str) != True or len(i['subject']) < 1:
                 abort(400, code='invalid subject data')
             if isinstance(i['time'], str) != True or verifyTime(i['length']) != True:
                 abort(400, code='invalid time data')
