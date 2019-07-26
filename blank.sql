@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 26 Jul 2019 pada 07.01
+-- Waktu pembuatan: 26 Jul 2019 pada 07.16
 -- Versi server: 10.1.34-MariaDB
 -- Versi PHP: 7.2.7
 
@@ -78,7 +78,7 @@ CREATE TABLE `examdata` (
 CREATE TABLE `fcmtoken` (
   `fcmToken` varchar(255) CHARACTER SET utf8 NOT NULL,
   `userId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `clientLanguage` varchar(2) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `clientLanguage` varchar(2) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'id',
   `lastReported` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `deviceModel` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `devicePlatform` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
