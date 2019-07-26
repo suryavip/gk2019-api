@@ -60,8 +60,9 @@ class Schedule(Resource):
                     'groupName': getGroupName(mysqlCon, owner),
                     'performerUserId': fbc.uid,
                     'performerName': fbc.decoded_token['name'],
+                    'scheduleId': scheduleId,
                 },
-                tag='schedule-edit-{}'.format(owner),
+                tag='schedule-edit-{}'.format(scheduleId),
             )
             rdbPathUpdate = ['poke/{}/schedule/{}'.format(u, owner) for u in mog.insider]
         else:

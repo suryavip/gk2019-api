@@ -1,12 +1,16 @@
 def getGroupName(mysqlCon, gid):
     # getting old data
+    return getSingleField(mysqlCon, 'name', 'groupdata', 'groupId', gid)
+
+def getSingleField(mysqlCon, colName, tableName, idColName, rowId, default=''):
+    # getting old data
     d = mysqlCon.rQuery(
-        'SELECT name FROM groupdata WHERE groupId = %s',
-        (gid,)
+        'SELECT {} FROM {} WHERE {} = %s'.format(colName, tableName, idColName),
+        (rowId,)
     )
-    for (name,) in d:
-        return name
-    return ''
+    for (a,) in d:
+        return a
+    return default
 
 def verifyTime(timeInput):
     # verify if HH:MM format (isoformat without sec and microsec)
