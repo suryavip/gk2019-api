@@ -1,10 +1,8 @@
 from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
-from membership import MembersOfGroup, GroupsOfUser
+from membership import MembersOfGroup
 from notification import Notification
-from rules import Rules
 from util import getGroupName, verifyTime
-import uuid
 import json
 
 
