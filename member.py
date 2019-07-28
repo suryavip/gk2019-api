@@ -180,6 +180,7 @@ class Member(Resource):
         # modify data
         if mog.tStatus == 'admin' and len(mog.insider) == 1:  # the only left. destroy this group
             mysqlCon.wQuery('DELETE FROM groupdata WHERE groupId = %s', (gid,))
+            mysqlCon.wQuery('UPDATE attachmentdata SET deleted = 1 WHERE ownerGroupId = %s', (gid,))
             rdbPathUpdate.append('poke/{}/group'.format(target))
             rdbPathUpdate.append('poke/{}/member/{}'.format(target, gid))
             # pending should get poked since pending wont be in part of equation of insider == 1
