@@ -49,8 +49,12 @@ class CleanUp(Resource):
         self.log.write('expired exams cleaned ({})\n'.format(self.mysqlCon.cursor.rowcount))
 
     def cleanDeletedAttachments(self):
-        c = self.mysqlCon.rQuery('SELECT attachmentId FROM attachmentdata WHERE deleted = 1')
-        aid = [a for (a,) in c]
+        c = self.mysqlCon.rQuery('SELECT attachmentId, ownerUserId, ownerGroupId FROM attachmentdata WHERE deleted = 1')
+        aid = [a for (a, u, g) in c]
+        path = []
+        for (a, u, g) in c:
+            i = u if u != None else g
+            path.append('attachment/{}/{}'.format(i, a))
 
         self.log.write('cleaning deleted attachments ({})...\n'.format(len(aid)))
         if len(aid) < 1:
@@ -63,7 +67,7 @@ class CleanUp(Resource):
             notFound.append(p)
 
         bucket = self.fbc.storage.bucket()
-        bucket.delete_blobs(aid, on_error=reportNotFound)
+        bucket.delete_blobs(path, on_error=reportNotFound)
 
         # log if error occours
         if len(notFound) > 0:
