@@ -29,21 +29,21 @@ class CleanUp(Resource):
 
     def cleanOldNotifications(self):
         self.log.write('cleaning old notifications...\n')
-        self.mysqlCon.rQuery(
+        self.mysqlCon.wQuery(
             'DELETE FROM notificationdata WHERE notificationTime < SUBDATE(CURRENT_DATE, 4)'  # 3 + 1 for timezone margin
         )
         self.log.write('old notifications cleaned ({})\n'.format(self.mysqlCon.cursor.rowcount))
 
     def cleanExpiredAssignments(self):
         self.log.write('cleaning expired assignments...\n')
-        self.mysqlCon.rQuery(
+        self.mysqlCon.wQuery(
             'DELETE FROM assignmentdata WHERE dueDate < SUBDATE(CURRENT_DATE, 1)'  # + 1 for timezone margin
         )
         self.log.write('expired assignments cleaned ({})\n'.format(self.mysqlCon.cursor.rowcount))
 
     def cleanExpiredExams(self):
         self.log.write('cleaning expired exams...\n')
-        self.mysqlCon.rQuery(
+        self.mysqlCon.wQuery(
             'DELETE FROM examdata WHERE examDate < SUBDATE(CURRENT_DATE, 1)'  # + 1 for timezone margin
         )
         self.log.write('expired exams cleaned ({})\n'.format(self.mysqlCon.cursor.rowcount))
