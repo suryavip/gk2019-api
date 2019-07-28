@@ -1,5 +1,7 @@
 from flask_restful import Resource
 
+from util import updateAttachment
+
 from connection import FirebaseCon, MysqlCon
 from datetime import datetime
 
@@ -35,18 +37,56 @@ class CleanUp(Resource):
         self.log.write('old notifications cleaned ({})\n'.format(self.mysqlCon.cursor.rowcount))
 
     def cleanExpiredAssignments(self):
-        self.log.write('cleaning expired assignments...\n')
+        candidate = self.mysqlCon.rQuery(
+            'SELECT assignmentId FROM assignmentdata WHERE dueDate < SUBDATE(CURRENT_DATE, 1)'  # + 1 for timezone margin
+        )
+        deleted = [assignmentId for (assignmentId,) in candidate]
+        q = ['%s'] * len(deleted)
+        self.log.write('cleaning expired assignments ({})...\n'.format(len(deleted)))
+        if len(deleted) < 1:
+            return
+
+        self.log.write('\n'.join(deleted))
+        self.log.write('\n')
+        
+        # delete assignment
         self.mysqlCon.wQuery(
-            'DELETE FROM assignmentdata WHERE dueDate < SUBDATE(CURRENT_DATE, 1)'  # + 1 for timezone margin
+            'DELETE FROM assignmentdata WHERE assignmentId IN ({})'.format(','.join(q)),
+            tuple(deleted)
         )
         self.log.write('expired assignments cleaned ({})\n'.format(self.mysqlCon.cursor.rowcount))
+        # mark delete attachment
+        self.mysqlCon.wQuery(
+            'UPDATE attachmentdata SET deleted = 1 WHERE assignmentId IN ({})'.format(','.join(q)),
+            tuple(deleted)
+        )
+        self.log.write('mark attachments for expired assignments ({})\n'.format(self.mysqlCon.cursor.rowcount))
 
     def cleanExpiredExams(self):
-        self.log.write('cleaning expired exams...\n')
-        self.mysqlCon.wQuery(
-            'DELETE FROM examdata WHERE examDate < SUBDATE(CURRENT_DATE, 1)'  # + 1 for timezone margin
+        candidate = self.mysqlCon.rQuery(
+            'SELECT examId FROM examdata WHERE examDate < SUBDATE(CURRENT_DATE, 1)'  # + 1 for timezone margin
         )
-        self.log.write('expired exams cleaned ({})\n'.format(self.mysqlCon.cursor.rowcount))
+        deleted = [examId for (examId,) in candidate]
+        q = ['%s'] * len(deleted)
+        self.log.write('cleaning expired exam ({})...\n'.format(len(deleted)))
+        if len(deleted) < 1:
+            return
+
+        self.log.write('\n'.join(deleted))
+        self.log.write('\n')
+        
+        # delete assignment
+        self.mysqlCon.wQuery(
+            'DELETE FROM examdata WHERE examId IN ({})'.format(','.join(q)),
+            tuple(deleted)
+        )
+        self.log.write('expired exam cleaned ({})\n'.format(self.mysqlCon.cursor.rowcount))
+        # mark delete attachment
+        self.mysqlCon.wQuery(
+            'UPDATE attachmentdata SET deleted = 1 WHERE examId IN ({})'.format(','.join(q)),
+            tuple(deleted)
+        )
+        self.log.write('mark attachments for expired exam ({})\n'.format(self.mysqlCon.cursor.rowcount))
 
     def cleanDeletedAttachments(self):
         c = self.mysqlCon.rQuery('SELECT attachmentId, ownerUserId, ownerGroupId FROM attachmentdata WHERE deleted = 1')
