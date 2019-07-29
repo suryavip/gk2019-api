@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup
-from notification import Notification
+from sendNotification import SendNotification
 from util import getGroupName, getSingleField, verifyDate, verifyTime, validateAttachment, updateAttachment
 import uuid
 
@@ -59,7 +59,7 @@ class Exam(Resource):
         rdbPathUpdate = []
         if len(mog.all) > 0:
             # send notif to insider except self
-            Notification(
+            SendNotification(
                 mog.exclude(mog.insider, [fbc.uid]),
                 'exam-new',
                 data={
@@ -130,7 +130,7 @@ class Exam(Resource):
         rdbPathUpdate = []
         if len(mog.all) > 0:
             # send notif to insider except self
-            Notification(
+            SendNotification(
                 mog.exclude(mog.insider, [fbc.uid]),
                 'exam-edit',
                 data={
@@ -186,7 +186,7 @@ class Exam(Resource):
         rdbPathUpdate = []
         if len(mog.all) > 0:
             # send notif to insider except self
-            Notification(
+            SendNotification(
                 mog.exclude(mog.insider, [fbc.uid]),
                 'exam-delete',
                 data={

@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup, GroupsOfUser
-from notification import Notification
+from sendNotification import SendNotification
 from rules import Rules
 from util import getGroupName
 import uuid
@@ -74,7 +74,7 @@ class Group(Resource):
             abort(400, code='no changes')
 
         # send notif to insider except self
-        Notification(
+        SendNotification(
             mog.exclude(mog.insider, [fbc.uid]),
             'group-edit',
             data={

@@ -6,7 +6,7 @@ import uuid
 from privateConfig import PrivateConfig
 
 
-class Notification():
+class SendNotification():
     def __init__(self, targetUser, notifType, data={}, tag=''):
         mysqlCon = MysqlCon()
         n = []

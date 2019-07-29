@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 
 from connection import FirebaseCon, MysqlCon
 
-from notification import Notification
+from sendNotification import SendNotification
 
 
 class FCMToken(Resource):
@@ -57,7 +57,7 @@ class FCMToken(Resource):
         fbc = FirebaseCon(args['X-idToken'])
 
         # send notif to target
-        Notification(
+        SendNotification(
             [fbc.uid],
             'test',
         )

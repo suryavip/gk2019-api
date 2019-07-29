@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup
-from notification import Notification
+from sendNotification import SendNotification
 from util import getGroupName, verifyTime
 import json
 
@@ -52,7 +52,7 @@ class Schedule(Resource):
         rdbPathUpdate = []
         if len(mog.all) > 0:
             # send notif to insider except self
-            Notification(
+            SendNotification(
                 mog.exclude(mog.insider, [fbc.uid]),
                 'schedule-edit',
                 data={

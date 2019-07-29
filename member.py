@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup, GroupsOfUser
-from notification import Notification
+from sendNotification import SendNotification
 from group import Group
 from rules import Rules
 from util import getGroupName
@@ -37,7 +37,7 @@ class Member(Resource):
         }])
 
         # send notif to admins
-        Notification(
+        SendNotification(
             mog.byLevel['admin'],
             'pending-new',
             data={
@@ -107,7 +107,7 @@ class Member(Resource):
         notifTarget = mog.exclude(mog.insider, [fbc.uid, target])
         if mog.tStatus == 'pending':
             # accepted to group. send to target and "insider except target and self"
-            Notification(
+            SendNotification(
                 [target],
                 'member-new-target',
                 data=notifData,
@@ -115,7 +115,7 @@ class Member(Resource):
             )
             notifData['targetUserId'] = target
             notifData['targetName'] = mog.tName
-            Notification(
+            SendNotification(
                 notifTarget,
                 'member-new',
                 data=notifData,
@@ -123,7 +123,7 @@ class Member(Resource):
             )
         elif mog.tStatus == 'member':
             # set to admin. send to target and "insider except target and self"
-            Notification(
+            SendNotification(
                 [target],
                 'admin-new-target',
                 data=notifData,
@@ -131,7 +131,7 @@ class Member(Resource):
             )
             notifData['targetUserId'] = target
             notifData['targetName'] = mog.tName
-            Notification(
+            SendNotification(
                 notifTarget,
                 'admin-new',
                 data=notifData,
@@ -139,7 +139,7 @@ class Member(Resource):
             )
         elif mog.tStatus == 'admin':
             # admin demote himself. send to "insider except target and self"
-            Notification(
+            SendNotification(
                 notifTarget,
                 'admin-stop',
                 data=notifData,
@@ -206,7 +206,7 @@ class Member(Resource):
         notifTarget = mog.exclude(mog.insider, [fbc.uid, target])
         if mog.tStatus == 'member' and target == fbc.uid:
             # leave. send notif to insider except self
-            Notification(
+            SendNotification(
                 notifTarget,
                 'member-delete-self',
                 data=notifData,
@@ -216,7 +216,7 @@ class Member(Resource):
             # kick member. send notif to insider except self and target
             notifData['targetUserId'] = target
             notifData['targetName'] = mog.tName
-            Notification(
+            SendNotification(
                 notifTarget,
                 'member-delete',
                 data=notifData,
@@ -224,7 +224,7 @@ class Member(Resource):
             )
         elif mog.tStatus == 'admin':
             # admin leave. send notif to insider except self
-            Notification(
+            SendNotification(
                 notifTarget,
                 'admin-delete',
                 data=notifData,
