@@ -8,6 +8,7 @@ from fcmToken import FCMToken
 from maintenance import CleanUp
 
 from group import Group
+from notification import Notification
 from member import Member
 from schedule import Schedule
 from assignment import Assignment
@@ -53,6 +54,9 @@ api.add_resource(FCMToken, '/fcmToken')
 # cache table name (channel): group
 # only group channel that not need for groupId/userId
 api.add_resource(Group, '/group')
+
+# cache channel: notification
+api.add_resource(Notification, '/notification')
 
 # cache channel: member/<gid>
 api.add_resource(Member, '/member/<string:gid>')

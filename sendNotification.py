@@ -1,4 +1,4 @@
-from connection import MysqlCon
+from connection import MysqlCon, FirebaseCon
 import requests
 import threading
 import json
@@ -9,6 +9,7 @@ from privateConfig import PrivateConfig
 class SendNotification():
     def __init__(self, targetUser, notifType, data={}, tag=''):
         mysqlCon = MysqlCon()
+        fbc = FirebaseCon()
         n = []
         batchId = uuid.uuid4()
         for t in targetUser:
@@ -19,6 +20,8 @@ class SendNotification():
                 'notificationData': data,
             })
         mysqlCon.insertQuery('notificationdata', n)
+
+        fbc.updateRDBTimestamp(['poke/{}/notification'.format(t) for t in targetUser])
 
         mysqlCon.db.commit()
 
