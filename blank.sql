@@ -1,10 +1,10 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.2
+-- version 4.8.5
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Waktu pembuatan: 26 Jul 2019 pada 07.25
--- Versi server: 10.1.34-MariaDB
+-- Host: localhost:3306
+-- Waktu pembuatan: 30 Jul 2019 pada 17.03
+-- Versi server: 10.1.40-MariaDB-cll-lve
 -- Versi PHP: 7.2.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `gk2019`
+-- Database: `boostedc_gk2019`
 --
 
 -- --------------------------------------------------------
@@ -149,7 +149,6 @@ CREATE TABLE `userdata` (
   `email` varchar(255) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `emailVerified` tinyint(1) NOT NULL DEFAULT '0',
   `registrationTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastSession` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `school` varchar(50) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
