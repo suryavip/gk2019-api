@@ -80,21 +80,23 @@ class MysqlCon:
     def insertQuery(self, tableName, data, updateOnDuplicate=False, errorHandler={}):
         cols = data[0].keys()
 
+        colsN = ','.join(cols)
+
         colsQ = ['%s'] * len(cols)
         colsQ = ','.join(colsQ)
 
         valsQ = ['({})'.format(colsQ)] * len(data)
         valsQ = ','.join(valsQ)
 
-        vals = [c for c in cols]
+        vals = []
         for r in data:
             for c in r:
                 vals.append(r[c])
 
-        query = "INSERT INTO {} ({}) VALUES {}".format(tableName, colsQ, valsQ)
+        query = "INSERT INTO {} ({}) VALUES {}".format(tableName, colsN, valsQ)
         if updateOnDuplicate == True:
             dupQ = ['{} = VALUES({})'.format(c, c) for c in cols]
-            query = "INSERT INTO {} ({}) VALUES {} ON DUPLICATE KEY UPDATE {}".format(tableName, colsQ, valsQ, dupQ)
+            query = "INSERT INTO {} ({}) VALUES {} ON DUPLICATE KEY UPDATE {}".format(tableName, colsN, valsQ, dupQ)
 
         return self.wQuery(
             query,
