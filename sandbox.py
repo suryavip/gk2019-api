@@ -1,18 +1,5 @@
-zKey = 'z'
-a = {
-    'a': 'aaa',
-    'b': 'bbb',
-    zKey: 'zzz',
-}
-for b in a:
-    print(b)
+from datetime import datetime
+import json
 
-print(6 in range(7))
-
-a = 5
-b = a
-print(b)
-a = 2
-b += 5
-print(b)
-print(a)
+j = json.dumps({'d': datetime.now().isoformat(), 'a': 'a'})
+print(j)

@@ -69,7 +69,7 @@ class User(Resource):
 
     def cleanup(self, fbc, rdbUpdate):
         # delete firebase rdb
-        ref = fbc.db.reference('user/{}'.format(fbc.uid))
+        ref = fbc.db.reference('poke/{}'.format(fbc.uid))
         ref.delete()
 
         if len(rdbUpdate) > 0:
@@ -83,6 +83,10 @@ class User(Resource):
             'profile_pic/{}.jpg'.format(fbc.uid),
             'profile_pic/{}_small.jpg'.format(fbc.uid),
         ])
+
+    def myconverter(self, o):
+        if isinstance(o, datetime):
+            return o.__str__()
 
     def delete(self):
         mysqlCon = MysqlCon()
@@ -116,10 +120,10 @@ class User(Resource):
 
         # backup deleted user data
         user = mysqlCon.rQuery(
-            'SELECT userId, name, email, emailVerified, registrationTime, lastSession, school FROM userdata WHERE userId = %s',
+            'SELECT userId, name, email, emailVerified, registrationTime, school FROM userdata WHERE userId = %s',
             (fbc.uid,)
         )
-        for (userId, name, email, emailVerified, registrationTime, lastSession, school) in user:
+        for (userId, name, email, emailVerified, registrationTime, school) in user:
             backup = open('deletedUser/{}.json'.format(userId), 'w+')
             backup.write(json.dumps({
                 'userId': userId,
@@ -127,10 +131,9 @@ class User(Resource):
                 'email': email,
                 'emailVerified': emailVerified,
                 'registrationTime': registrationTime,
-                'lastSession': lastSession,
                 'school': school,
-                'deleteTime': datetime.now().isoformat(),
-            }))
+                'deleteTime': datetime.now(),
+            }, default=self.myconverter))
 
         mysqlCon.wQuery("DELETE FROM userdata WHERE userId = %s", (fbc.uid,))
 
