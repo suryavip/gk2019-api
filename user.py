@@ -37,6 +37,12 @@ class User(Resource):
             'school': args['school'],
         }])
 
+        rdbPathUpdate = [
+            'poke/{}/group'.format(newUser.uid),
+            'poke/{}/notification'.format(newUser.uid),
+        ]
+        fbc.updateRDBTimestamp(rdbPathUpdate)
+
         mysqlCon.db.commit()
 
         return {}, 201
