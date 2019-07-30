@@ -38,7 +38,7 @@ class Assignment(Resource):
         else:
             ownerCol = 'ownerUserId'
 
-        aid = uuid.uuid4()
+        aid = str(uuid.uuid4())
 
         # store data
         mysqlCon.insertQuery('assignmentdata', [{

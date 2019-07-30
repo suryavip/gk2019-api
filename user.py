@@ -19,7 +19,7 @@ class User(Resource):
         parser.add_argument('password', required=True, help='password')
         args = parser.parse_args()
 
-        uid = uuid.uuid4()
+        uid = str(uuid.uuid4())
 
         mysqlCon.insertQuery('userdata', [{
             'userId': uid,

@@ -41,7 +41,7 @@ class Exam(Resource):
         else:
             ownerCol = 'ownerUserId'
 
-        eid = uuid.uuid4()
+        eid = str(uuid.uuid4())
 
         # store data
         mysqlCon.insertQuery('examdata', [{

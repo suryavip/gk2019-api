@@ -26,7 +26,7 @@ class Group(Resource):
         if len(gou.all) >= Rules.maxGroupPerUser:
             abort(400, code='cannot join more than {} groups'.format(Rules.maxGroupPerUser))
 
-        gid = uuid.uuid4()
+        gid = str(uuid.uuid4())
 
         mysqlCon.insertQuery('groupdata', [{
             'groupId': gid,

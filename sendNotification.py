@@ -11,7 +11,7 @@ class SendNotification():
         mysqlCon = MysqlCon()
         fbc = FirebaseCon()
         n = []
-        batchId = uuid.uuid4()
+        batchId = str(uuid.uuid4())
         for t in targetUser:
             n.append({
                 'batchId': batchId,
