@@ -5,6 +5,7 @@ from membership import MembersOfGroup, GroupsOfUser
 from datetime import datetime
 import threading
 import json
+import uuid
 
 
 class User(Resource):
@@ -18,9 +19,18 @@ class User(Resource):
         parser.add_argument('password', required=True, help='password')
         args = parser.parse_args()
 
-        # regist to firebase
+        uid = uuid.uuid4()
+
+        mysqlCon.insertQuery('userdata', [{
+            'userId': uid,
+            'name': args['name'],
+            'email': args['email'],
+            'school': args['school'],
+        }])
+
         try:
-            newUser = fbc.auth.create_user(
+            fbc.auth.create_user(
+                uid=uid,
                 display_name=args['name'],
                 email=args['email'],
                 password=args['password'],
@@ -30,13 +40,6 @@ class User(Resource):
         except ValueError as err:
             abort(400, code='ValueError', message='{}'.format(err))
 
-        mysqlCon.insertQuery('userdata', [{
-            'userId': newUser.uid,
-            'name': args['name'],
-            'email': args['email'],
-            'school': args['school'],
-        }])
-
         mysqlCon.db.commit()
 
         return {}, 201
@@ -45,12 +48,20 @@ class User(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('name', required=True, help='name')
         parser.add_argument('school', default=None)
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
 
-        mysqlCon.wQuery("UPDATE userdata SET school = %s WHERE userId = %s", (args['school'], fbc.uid))
+        mysqlCon.wQuery("UPDATE userdata SET name = %s, school = %s WHERE userId = %s", (args['name'], args['school'], fbc.uid))
+
+        try:
+            fbc.auth.update_user(fbc.uid, display_name=args['name'])
+        except fbc.auth.AuthError as err:
+            abort(400, code='{}'.format(err.code), message='{}'.format(err))
+        except ValueError as err:
+            abort(400, code='ValueError', message='{}'.format(err))
 
         mysqlCon.db.commit()
 
