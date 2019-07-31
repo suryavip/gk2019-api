@@ -175,14 +175,12 @@ class Member(Resource):
         if mog.tStatus == 'admin' and len(mog.byLevel['admin']) < 2 and len(mog.byLevel['member']) > 0:
             abort(400, code='must set another admin first if there is another member (non admin)')
 
-        rdbPathUpdate = []
+        rdbPathUpdate = ['poke/{}/group'.format(target)]
 
         # modify data
         if mog.tStatus == 'admin' and len(mog.insider) == 1:  # the only left. destroy this group
             mysqlCon.wQuery('DELETE FROM groupdata WHERE groupId = %s', (gid,))
             mysqlCon.wQuery('UPDATE attachmentdata SET deleted = 1 WHERE ownerGroupId = %s', (gid,))
-            rdbPathUpdate.append('poke/{}/group'.format(target))
-            rdbPathUpdate.append('poke/{}/member/{}'.format(target, gid))
             # pending should get poked since pending wont be in part of equation of insider == 1
             rdbPathUpdate += ['poke/{}/group'.format(u) for u in mog.byLevel['pending']]
         else:
@@ -190,12 +188,11 @@ class Member(Resource):
                 'DELETE FROM memberdata WHERE groupId = %s AND userId = %s',
                 (gid, target)
             )
-            if mog.tStatus == 'pending':  # so rejected user will update his group data channel
-                rdbPathUpdate.append('poke/{}/group'.format(target))
+            if mog.tStatus == 'pending': 
                 # update only admin since only admin get updated when this pending send request
                 rdbPathUpdate += ['poke/{}/member/{}'.format(u, gid) for u in mog.byLevel['admin']]
             else:
-                rdbPathUpdate += ['poke/{}/member/{}'.format(u, gid) for u in mog.insider]
+                rdbPathUpdate += ['poke/{}/member/{}'.format(u, gid) for u in mog.exclude(mog.insider, [target])]
 
         notifData = {
             'groupId': gid,
