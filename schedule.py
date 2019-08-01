@@ -98,6 +98,6 @@ class Schedule(Resource):
 
         result = {}
         for (scheduleId, data) in schedule:
-            result[scheduleId] = data
+            result[scheduleId] = json.loads(data)
 
         return result
