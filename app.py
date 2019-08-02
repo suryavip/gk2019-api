@@ -32,7 +32,7 @@ def after_request(response):
         requesterOrigin = 'http://localhost'
     response.headers["Access-Control-Allow-Origin"] = requesterOrigin
     response.headers["Access-Control-Allow-Credentials"] = "true"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, X-idToken, X-oldFCMToken, X-newFCMToken"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, X-idToken, X-oldFCMToken, X-newFCMToken, X-timestamp"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE"
     return response
 
