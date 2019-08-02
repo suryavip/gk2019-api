@@ -12,6 +12,7 @@ class Group(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('X-timestamp', required=True, type=int)
         parser.add_argument('name', required=True, help='name')
         parser.add_argument('school', default=None)
         args = parser.parse_args()
@@ -40,7 +41,7 @@ class Group(Resource):
         }])
 
         rdbPathUpdate = ['poke/{}/group'.format(fbc.uid), 'poke/{}/member/{}'.format(fbc.uid, gid)]
-        fbc.updateRDBTimestamp(rdbPathUpdate)
+        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate)
 
         mysqlCon.db.commit()
 
@@ -50,6 +51,7 @@ class Group(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('X-timestamp', required=True, type=int)
         parser.add_argument('groupId', required=True, help='groupId')
         parser.add_argument('name', required=True, help='name')
         parser.add_argument('school', default=None)
@@ -88,7 +90,7 @@ class Group(Resource):
 
         # poke everybody to update
         rdbPathUpdate = ['poke/{}/group'.format(u.userId) for u in mog.all]
-        fbc.updateRDBTimestamp(rdbPathUpdate)
+        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate)
 
         mysqlCon.db.commit()
 

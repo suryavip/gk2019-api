@@ -21,11 +21,11 @@ class FirebaseCon:
         self.auth = auth
         self.storage = storage
 
-    def updateRDBTimestamp(self, paths):
+    def updateRDBTimestamp(self, t, paths):
         # paths is list
         rdbUpdate = {}
         for i in paths:
-            rdbUpdate[i] = {'.sv': 'timestamp'}
+            rdbUpdate[i] = t
 
         def doWork():
             ref = self.db.reference('')

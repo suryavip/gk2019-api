@@ -14,6 +14,7 @@ class Assignment(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('X-timestamp', required=True, type=int)
         parser.add_argument('subject', required=True, help='subject')
         parser.add_argument('dueDate', required=True, help='dueDate')
         parser.add_argument('note', default=None)
@@ -72,7 +73,7 @@ class Assignment(Resource):
         else:
             rdbPathUpdate.append('poke/{}/assignment/{}'.format(fbc.uid, owner))
 
-        fbc.updateRDBTimestamp(rdbPathUpdate)
+        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate)
 
         mysqlCon.db.commit()
 
@@ -82,6 +83,7 @@ class Assignment(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('X-timestamp', required=True, type=int)
         parser.add_argument('assignmentId', required=True, help='assignmentId')
         parser.add_argument('dueDate', required=True, help='dueDate')
         parser.add_argument('note', default=None)
@@ -140,7 +142,7 @@ class Assignment(Resource):
         else:
             rdbPathUpdate.append('poke/{}/assignment/{}'.format(fbc.uid, owner))
 
-        fbc.updateRDBTimestamp(rdbPathUpdate)
+        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate)
 
         mysqlCon.db.commit()
 
@@ -150,6 +152,7 @@ class Assignment(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('X-timestamp', required=True, type=int)
         parser.add_argument('assignmentId', required=True, help='assignmentId')
         args = parser.parse_args()
 
@@ -196,7 +199,7 @@ class Assignment(Resource):
         else:
             rdbPathUpdate.append('poke/{}/assignment/{}'.format(fbc.uid, owner))
 
-        fbc.updateRDBTimestamp(rdbPathUpdate)
+        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate)
 
         mysqlCon.db.commit()
 

@@ -14,6 +14,7 @@ class Exam(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('X-timestamp', required=True, type=int)
         parser.add_argument('subject', required=True, help='subject')
         parser.add_argument('examDate', required=True, help='examDate')
         parser.add_argument('examTime', default=None)
@@ -76,7 +77,7 @@ class Exam(Resource):
         else:
             rdbPathUpdate.append('poke/{}/exam/{}'.format(fbc.uid, owner))
 
-        fbc.updateRDBTimestamp(rdbPathUpdate)
+        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate)
 
         mysqlCon.db.commit()
 
@@ -86,6 +87,7 @@ class Exam(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('X-timestamp', required=True, type=int)
         parser.add_argument('examId', required=True, help='examId')
         parser.add_argument('examDate', required=True, help='examDate')
         parser.add_argument('examTime', default=None)
@@ -147,7 +149,7 @@ class Exam(Resource):
         else:
             rdbPathUpdate.append('poke/{}/exam/{}'.format(fbc.uid, owner))
 
-        fbc.updateRDBTimestamp(rdbPathUpdate)
+        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate)
 
         mysqlCon.db.commit()
 
@@ -157,6 +159,7 @@ class Exam(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('X-timestamp', required=True, type=int)
         parser.add_argument('examId', required=True, help='examId')
         args = parser.parse_args()
 
@@ -203,7 +206,7 @@ class Exam(Resource):
         else:
             rdbPathUpdate.append('poke/{}/exam/{}'.format(fbc.uid, owner))
 
-        fbc.updateRDBTimestamp(rdbPathUpdate)
+        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate)
 
         mysqlCon.db.commit()
 

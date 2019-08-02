@@ -3,6 +3,7 @@ import requests
 import threading
 import json
 import uuid
+import time
 from privateConfig import PrivateConfig
 
 
@@ -21,7 +22,7 @@ class SendNotification():
             })
         mysqlCon.insertQuery('notificationdata', n)
 
-        fbc.updateRDBTimestamp(['poke/{}/notification'.format(t) for t in targetUser])
+        fbc.updateRDBTimestamp(int(time.time()), ['poke/{}/notification'.format(t) for t in targetUser])
 
         mysqlCon.db.commit()
 

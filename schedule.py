@@ -11,6 +11,7 @@ class Schedule(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('X-timestamp', required=True, type=int)
         parser.add_argument('day', required=True, help='day', type=int)
         parser.add_argument('data', required=True, help='data', type=list)
         args = parser.parse_args()
@@ -68,7 +69,7 @@ class Schedule(Resource):
         else:
             rdbPathUpdate.append('poke/{}/schedule/{}'.format(fbc.uid, owner))
 
-        fbc.updateRDBTimestamp(rdbPathUpdate)
+        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate)
 
         mysqlCon.db.commit()
 
