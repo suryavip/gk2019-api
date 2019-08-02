@@ -13,7 +13,7 @@ class Member(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
-        parser.add_argument('X-timestamp', required=True, type=int)
+        parser.add_argument('X-timestamp', required=True, type=int, location='headers')
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
@@ -64,7 +64,7 @@ class Member(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
-        parser.add_argument('X-timestamp', required=True, type=int)
+        parser.add_argument('X-timestamp', required=True, type=int, location='headers')
         parser.add_argument('userId', default=None)
         args = parser.parse_args()
 
@@ -158,7 +158,7 @@ class Member(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
-        parser.add_argument('X-timestamp', required=True, type=int)
+        parser.add_argument('X-timestamp', required=True, type=int, location='headers')
         parser.add_argument('userId', default=None)
         args = parser.parse_args()
 
