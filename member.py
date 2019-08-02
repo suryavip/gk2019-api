@@ -250,8 +250,8 @@ class Member(Resource):
 
         result = {}
         for i in mog.all:
-            if mog.rStatus == 'member' and i.level == 'pending':
+            if mog.rStatus == 'member' and i['level'] == 'pending':
                 continue
-            result[i.userId] = i.level
+            result[i['userId']] = i['level']
 
         return result
