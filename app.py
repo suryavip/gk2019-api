@@ -7,7 +7,7 @@ from user import User, Profiles
 from fcmToken import FCMToken
 from maintenance import CleanUp
 
-from group import Group
+from group import Group, GroupInfo
 from notification import Notification
 from member import Member
 from schedule import Schedule
@@ -48,6 +48,7 @@ api.add_resource(CleanUp, '/maintenance/cleanup')
 
 api.add_resource(User, '/user')
 api.add_resource(Profiles, '/profiles')
+api.add_resource(GroupInfo, '/groupInfo/<string:gid>')
 
 api.add_resource(FCMToken, '/fcmToken')
 

@@ -101,40 +101,39 @@ class Group(Resource):
     def get(self):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
-        parser.add_argument('X-idToken', default=None, location='headers')
-        parser.add_argument('groupId', default=None, location='headers')
+        parser.add_argument('X-idToken', required=True, help='a', location='headers')
         args = parser.parse_args()
 
-        if args['groupId'] == None:
-            if args['X-idToken'] == None:
-                abort(400, code='a')
+        fbc = FirebaseCon(args['X-idToken'])
 
-            fbc = FirebaseCon(args['X-idToken'])
+        group = mysqlCon.rQuery(
+            'SELECT groupdata.groupId, name, school, level FROM groupdata JOIN memberdata ON groupdata.groupId = memberdata.groupId WHERE memberdata.userId = %s',
+            (fbc.uid,)
+        )
+        result = {}
+        for (groupId, name, school, level) in group:
+            result[groupId] = {
+                'name': name,
+                'school': school,
+                'level': level,
+            }
 
-            group = mysqlCon.rQuery(
-                'SELECT groupdata.groupId, name, school, level FROM groupdata JOIN memberdata ON groupdata.groupId = memberdata.groupId WHERE memberdata.userId = %s',
-                (fbc.uid,)
-            )
-            result = {}
-            for (groupId, name, school, level) in group:
-                result[groupId] = {
-                    'name': name,
-                    'school': school,
-                    'level': level,
-                }
+        return result
 
-            return result
 
-        else:
-            group = mysqlCon.rQuery(
-                'SELECT groupId, name, school FROM groupdata WHERE groupId = %s',
-                (args['groupId'],)
-            )
-            result = {}
-            for (groupId, name, school) in group:
-                result[groupId] = {
-                    'name': name,
-                    'school': school,
-                }
+class GroupInfo(Resource):
 
-            return result
+    def get(self, gid):
+        mysqlCon = MysqlCon()
+        group = mysqlCon.rQuery(
+            'SELECT name, school FROM groupdata WHERE groupId = %s',
+            (gid,)
+        )
+        for (name, school) in group:
+            return {
+                'groupId': gid,
+                'name': name,
+                'school': school,
+            }
+
+        abort(404)
