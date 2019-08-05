@@ -246,7 +246,7 @@ class Member(Resource):
 
         mog = MembersOfGroup(gid, fbc.uid)
         if mog.rStatus != 'admin' and mog.rStatus != 'member':
-            abort(404, code='requester is not insider')
+            abort(400, code='requester is not insider')
 
         result = {}
         for i in mog.all:
