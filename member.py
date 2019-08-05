@@ -69,7 +69,7 @@ class Member(Resource):
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
-        target = fbc.uid if 'userId' not in args else args['userId']
+        target = fbc.uid if args['userId'] == None else args['userId']
 
         # check privilege
         mog = MembersOfGroup(gid, fbc.uid, target, True)
@@ -163,7 +163,7 @@ class Member(Resource):
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
-        target = fbc.uid if 'userId' not in args else args['userId']
+        target = fbc.uid if args['userId'] == None else args['userId']
 
         # check privilege
         mog = MembersOfGroup(gid, fbc.uid, target, True)
