@@ -9,6 +9,8 @@ from privateConfig import PrivateConfig
 
 class SendNotification():
     def __init__(self, targetUser, notifType, data={}, tag=''):
+        if len(targetUser) == 0:
+            return
         mysqlCon = MysqlCon()
         fbc = FirebaseCon()
         n = []
