@@ -89,7 +89,7 @@ class Group(Resource):
         )
 
         # poke everybody to update
-        rdbPathUpdate = ['poke/{}/group'.format(u.userId) for u in mog.all]
+        rdbPathUpdate = ['poke/{}/group'.format(u['userId']) for u in mog.all]
         fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate)
 
         mysqlCon.db.commit()
