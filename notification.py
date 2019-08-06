@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from connection import FirebaseCon, MysqlCon
+import json
 
 
 class Notification(Resource):
@@ -17,8 +18,8 @@ class Notification(Resource):
         )
         result = [{
             'type': notifType,
-            'time': notifTime,
-            'data': notifData,
+            'time': notifTime.timestamp(),
+            'data': json.loads(notifData),
         } for (notifType, notifTime, notifData) in notif]
 
         return result
