@@ -20,8 +20,9 @@ class SendNotification():
                 'batchId': batchId,
                 'targetUserId': t,
                 'notificationType': notifType,
-                'notificationData': data,
+                'notificationData': json.dumps(data),
             })
+        
         mysqlCon.insertQuery('notificationdata', n)
 
         fbc.updateRDBTimestamp(int(time.time()), ['poke/{}/notification'.format(t) for t in targetUser])
