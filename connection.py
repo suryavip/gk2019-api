@@ -96,6 +96,7 @@ class MysqlCon:
         query = "INSERT INTO {} ({}) VALUES {}".format(tableName, colsN, valsQ)
         if updateOnDuplicate == True:
             dupQ = ['{} = VALUES({})'.format(c, c) for c in cols]
+            dupQ = ','.join(dupQ)
             query = "INSERT INTO {} ({}) VALUES {} ON DUPLICATE KEY UPDATE {}".format(tableName, colsN, valsQ, dupQ)
 
         return self.wQuery(
