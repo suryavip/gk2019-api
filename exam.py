@@ -237,10 +237,13 @@ class Exam(Resource):
 
         result = {}
         for (examId, subject, examDate, examTime, note) in exam:
+            eTime = None
+            if examTime != None:
+                eTime = (datetime.min + examTime).time().isoformat(timespec='minutes')
             result[examId] = {
                 'subject': subject,
                 'examDate': examDate.isoformat(),
-                'examTime': (datetime.min + examTime).time().isoformat(timespec='minutes'),
+                'examTime': eTime,
                 'note': note,
                 'attachment': [],
             }
