@@ -13,7 +13,7 @@ class Schedule(Resource):
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
         parser.add_argument('X-timestamp', required=True, type=int, location='headers')
         parser.add_argument('day', required=True, help='day', type=int)
-        parser.add_argument('data', required=True, help='data', type=list)
+        parser.add_argument('data', required=True, help='data', action='append', type=dict)
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
@@ -38,7 +38,7 @@ class Schedule(Resource):
                 abort(400, code='invalid data')
             if isinstance(i['subject'], str) != True or len(i['subject']) < 1:
                 abort(400, code='invalid subject data')
-            if isinstance(i['time'], str) != True or verifyTime(i['length']) != True:
+            if isinstance(i['time'], str) != True or verifyTime(i['time']) != True:
                 abort(400, code='invalid time data')
             if isinstance(i['length'], int) != True:
                 abort(400, code='invalid length data')
