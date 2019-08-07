@@ -236,17 +236,18 @@ class Assignment(Resource):
                 'attachment': [],
             }
 
-        q = ['%s'] * len(result.keys())
-        q = ','.join(q)
-        attachment = mysqlCon.rQuery(
-            'SELECT attachmentId, originalFilename, assignmentId FROM attachmentdata WHERE assignmentId IN ({})'.format(q),
-            tuple(result.keys())
-        )
+        if len(result.keys()) > 0:
+            q = ['%s'] * len(result.keys())
+            q = ','.join(q)
+            attachment = mysqlCon.rQuery(
+                'SELECT attachmentId, originalFilename, assignmentId FROM attachmentdata WHERE assignmentId IN ({})'.format(q),
+                tuple(result.keys())
+            )
 
-        for (attachmentId, originalFilename, assignmentId) in attachment:
-            result[assignmentId]['attachment'].append({
-                'attachmentId': attachmentId,
-                'originalFilename': originalFilename,
-            })
+            for (attachmentId, originalFilename, assignmentId) in attachment:
+                result[assignmentId]['attachment'].append({
+                    'attachmentId': attachmentId,
+                    'originalFilename': originalFilename,
+                })
 
         return result
