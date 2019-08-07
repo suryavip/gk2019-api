@@ -13,7 +13,7 @@ class Schedule(Resource):
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
         parser.add_argument('X-timestamp', required=True, type=int, location='headers')
         parser.add_argument('day', required=True, help='day', type=int)
-        parser.add_argument('data', required=True, help='data', action='append', type=dict)
+        parser.add_argument('data', default=[], action='append', type=dict)
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])

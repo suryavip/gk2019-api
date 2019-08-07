@@ -18,7 +18,7 @@ class Assignment(Resource):
         parser.add_argument('subject', required=True, help='subject')
         parser.add_argument('dueDate', required=True, help='dueDate')
         parser.add_argument('note', default=None)
-        parser.add_argument('attachments', default=[], type=list)
+        parser.add_argument('attachments', default=[], action='append', type=dict)
         args = parser.parse_args()
 
         if len(args['subject']) < 1:
@@ -87,7 +87,7 @@ class Assignment(Resource):
         parser.add_argument('assignmentId', required=True, help='assignmentId')
         parser.add_argument('dueDate', required=True, help='dueDate')
         parser.add_argument('note', default=None)
-        parser.add_argument('attachments', default=[], type=list)
+        parser.add_argument('attachments', default=[], action='append', type=dict)
         args = parser.parse_args()
 
         if verifyDate(args['dueDate']) != True:

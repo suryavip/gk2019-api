@@ -20,7 +20,7 @@ class Exam(Resource):
         parser.add_argument('examDate', required=True, help='examDate')
         parser.add_argument('examTime', default=None)
         parser.add_argument('note', default=None)
-        parser.add_argument('attachments', default=[], type=list)
+        parser.add_argument('attachments', default=[], action='append', type=dict)
         args = parser.parse_args()
 
         if len(args['subject']) < 1:
@@ -93,7 +93,7 @@ class Exam(Resource):
         parser.add_argument('examDate', required=True, help='examDate')
         parser.add_argument('examTime', default=None)
         parser.add_argument('note', default=None)
-        parser.add_argument('attachments', default=[], type=list)
+        parser.add_argument('attachments', default=[], action='append', type=dict)
         args = parser.parse_args()
 
         if verifyDate(args['examDate']) != True:
