@@ -1,3 +1,5 @@
+from datetime import date, time
+
 def getGroupName(mysqlCon, gid):
     # getting old data
     return getSingleField(mysqlCon, 'name', 'groupdata', 'groupId', gid)
