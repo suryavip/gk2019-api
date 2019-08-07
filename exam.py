@@ -3,6 +3,7 @@ from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup
 from sendNotification import SendNotification
 from util import getGroupName, getSingleField, verifyDate, verifyTime, validateAttachment, updateAttachment
+from datetime import datetime
 import uuid
 
 
@@ -239,7 +240,7 @@ class Exam(Resource):
             result[examId] = {
                 'subject': subject,
                 'examDate': examDate.isoformat(),
-                'examTime': examTime,
+                'examTime': (datetime.min + examTime).time().isoformat(timespec='minutes'),
                 'note': note,
                 'attachment': [],
             }
