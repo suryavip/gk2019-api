@@ -231,7 +231,7 @@ class Assignment(Resource):
         for (assignmentId, subject, dueDate, note) in assignment:
             result[assignmentId] = {
                 'subject': subject,
-                'dueDate': dueDate,
+                'dueDate': dueDate.isoformat(),
                 'note': note,
                 'attachment': [],
             }

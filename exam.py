@@ -238,7 +238,7 @@ class Exam(Resource):
         for (examId, subject, examDate, examTime, note) in exam:
             result[examId] = {
                 'subject': subject,
-                'examDate': examDate,
+                'examDate': examDate.isoformat(),
                 'examTime': examTime,
                 'note': note,
                 'attachment': [],
