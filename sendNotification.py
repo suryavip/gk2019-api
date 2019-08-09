@@ -34,77 +34,51 @@ class SendNotification():
     def translate(self, notifType, langKey, data={}):
         lang = {
             'id': {
+                'assignment-new': '',
+                'assignment-edit': '',
+                'assignment-delete': '',
+                'exam-new': '',
+                'exam-edit': '',
+                'exam-delete': '',
                 'test': 'Ini adalah tes push notification',
-                'editGroup': '{} mengubah nama grup {} menjadi {}',
-                'newPending': '{} meminta bergabung kedalam grup {}',
-                'newMemberTarget': '{} menerima kamu bergabung kedalam grup {}',
-                'newMember': '{} menerima {} bergabung kedalam grup {}',
-                'deleteMemberSelf': '{} keluar dari grup {}',
-                'deleteAdmin': '{} keluar dari grup {}',
-                'deleteMember': '{} mengeluarkan {} dari grup {}',
-                'newAdminTarget': '{} menjadikan kamu sebagai admin grup {}',
-                'newAdmin': '{} menjadikan {} sebagai admin grup {}',
-                'stopAdmin': '{} berhenti menjadi admin grup {}',
-                'newReminder': '{} menambahkan {}: {}',
-                'editReminder': '{} mengubah {}: {}',
-                'deleteReminder': '{} menghapus {}: {}',
+                'group-edit': '{performerName} mengubah info grup {groupName}',
+                'pending-new': '{performerName} meminta bergabung kedalam grup {groupName}',
+                'member-new-target': '{performerName} menerima kamu bergabung kedalam grup {groupName}',
+                'member-new': '{performerName} menerima {targetName} bergabung kedalam grup {groupName}',
+                'admin-new-target': '{perormerName} menjadikan kamu sebagai admin grup {groupName}',
+                'admin-new': '{performerName} menjadikan {targetName} sebagai admin grup {groupName}',
+                'admin-stop': '{performerName} berhenti menjadi admin grup {groupName}',
+                'member-delete-self': '{performerName} keluar dari grup {groupName}',
+                'member-delete': '{performerName} mengeluarkan {targetName} dari grup {groupName}',
+                'admin-delete': '{performerName} keluar dari grup {groupName}',
+                'schedule-edit': '',
             },
             'en': {
+                'assignment-new': '',
+                'assignment-edit': '',
+                'assignment-delete': '',
+                'exam-new': '',
+                'exam-edit': '',
+                'exam-delete': '',
                 'test': 'This is the push notification test',
-                'editGroup': '{} changed {} group\'s name to {}',
-                'newPending': '{} asked to join {}',
-                'newMemberTarget': '{} accepted you to join {}',
-                'newMember': '{} accepted {} to join {}',
-                'deleteMemberSelf': '{} left from {}',
-                'deleteAdmin': '{} left from {}',
-                'deleteMember': '{} kicked {} from {}',
-                'newAdminTarget': '{} promoted you as admin of {}',
-                'newAdmin': '{} promoted {} as admin of {}',
-                'stopAdmin': '{} stopped from being admin of {}',
-                'newReminder': '{} added new {}: {}',
-                'editReminder': '{} changed {}: {}',
-                'deleteReminder': '{} deleted {}: {}',
+                'group-edit': '{performerName} changed {groupName} group info\'s',
+                'pending-new': '{performerName} asked to join {groupName}',
+                'member-new-target': '{performerName} accepted you to join {groupName}',
+                'member-new': '{performerName} accepted {targetName} to join {groupName}',
+                'admin-new-target': '{performerName} promoted you as admin of {groupName}',
+                'admin-new': '{performerName} promoted {targetName} as admin of {groupName}',
+                'admin-stop': '{performerName} stopped from being admin of {groupName}',
+                'member-delete-self': '{performerName} left from {groupName}',
+                'member-delete': '{performerName} kicked {targetName} from {groupName}',
+                'admin-delete': '{performerName} left from {groupName}',
+                'schedule-edit': '',
             },
         }
 
         if langKey not in lang:
             langKey = 'id'  # default
 
-        def reminderType(rType):
-            if langKey == 'id':
-                rt = 'tugas' if rType == 'homework' else ''
-                rt = 'ujian' if rType == 'exam' else rt
-            elif langKey == 'en':
-                rt = rType
-            return rt
-
-        if notifType == 'test':
-            o = lang[langKey][notifType]
-        elif notifType == 'editGroup':
-            o = lang[langKey][notifType].format(data['performer']['name'], data['oldName'], data['newName'])
-        elif notifType == 'newPending':
-            o = lang[langKey][notifType].format(data['performer']['name'], data['groupName'])
-        elif notifType == 'newMemberTarget':
-            o = lang[langKey][notifType].format(data['performer']['name'], data['groupName'])
-        elif notifType == 'newMember':
-            o = lang[langKey][notifType].format(data['performer']['name'], data['target']['name'], data['groupName'])
-        elif notifType == 'deleteMemberSelf' or notifType == 'deleteAdmin':
-            o = lang[langKey][notifType].format(data['performer']['name'], data['groupName'])
-        elif notifType == 'deleteMember':
-            o = lang[langKey][notifType].format(data['performer']['name'], data['target']['name'], data['groupName'])
-        elif notifType == 'newAdminTarget':
-            o = lang[langKey][notifType].format(data['performer']['name'], data['groupName'])
-        elif notifType == 'newAdmin':
-            o = lang[langKey][notifType].format(data['performer']['name'], data['target']['name'], data['groupName'])
-        elif notifType == 'stopAdmin':
-            o = lang[langKey][notifType].format(data['performer']['name'], data['groupName'])
-        elif notifType == 'newReminder':
-            o = lang[langKey][notifType].format(data['performer']['name'], reminderType(data['reminderType']), data['subject'])
-        elif notifType == 'editReminder':
-            o = lang[langKey][notifType].format(data['performer']['name'], reminderType(data['reminderType']), data['subject'])
-        elif notifType == 'deleteReminder':
-            o = lang[langKey][notifType].format(data['performer']['name'], reminderType(data['reminderType']), data['subject'])
-        return o
+        return lang[langKey][notifType].format_map(data)
 
     def push(self, targetUser, notifType, data, tag):
         data['notifType'] = notifType
