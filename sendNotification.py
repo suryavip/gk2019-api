@@ -78,7 +78,7 @@ class SendNotification():
         if langKey not in lang:
             langKey = 'id'  # default
 
-        return lang[langKey][notifType].format_map(data)
+        return lang[langKey][notifType].format(**data)
 
     def push(self, targetUser, notifType, data, tag):
         data['notifType'] = notifType
