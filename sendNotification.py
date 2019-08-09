@@ -45,7 +45,7 @@ class SendNotification():
                 'pending-new': '{performerName} meminta bergabung kedalam grup {groupName}',
                 'member-new-target': '{performerName} menerima kamu bergabung kedalam grup {groupName}',
                 'member-new': '{performerName} menerima {targetName} bergabung kedalam grup {groupName}',
-                'admin-new-target': '{perormerName} menjadikan kamu sebagai admin grup {groupName}',
+                'admin-new-target': '{performerName} menjadikan kamu sebagai admin grup {groupName}',
                 'admin-new': '{performerName} menjadikan {targetName} sebagai admin grup {groupName}',
                 'admin-stop': '{performerName} berhenti menjadi admin grup {groupName}',
                 'member-delete-self': '{performerName} keluar dari grup {groupName}',
