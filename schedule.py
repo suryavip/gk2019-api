@@ -62,6 +62,7 @@ class Schedule(Resource):
                     'performerUserId': fbc.uid,
                     'performerName': fbc.decoded_token['name'],
                     'scheduleId': scheduleId,
+                    'day': args['day'],
                 },
                 tag='schedule-edit-{}'.format(scheduleId),
             )

@@ -51,7 +51,7 @@ class SendNotification():
                 'member-delete-self': '{performerName} keluar dari grup {groupName}',
                 'member-delete': '{performerName} mengeluarkan {targetName} dari grup {groupName}',
                 'admin-delete': '{performerName} keluar dari grup {groupName}',
-                'schedule-edit': '{performerName} mengubah jadwal hari {day}',
+                'schedule-edit': '{performerName} mengubah jadwal hari {dayName}',
             },
             'en': {
                 'assignment-new': '{performerName} added new {subject}\'s assignment',
@@ -71,12 +71,19 @@ class SendNotification():
                 'member-delete-self': '{performerName} left from {groupName}',
                 'member-delete': '{performerName} kicked {targetName} from {groupName}',
                 'admin-delete': '{performerName} left from {groupName}',
-                'schedule-edit': '{performerName} changed {day}\'s schedule',
+                'schedule-edit': '{performerName} changed {dayName}\'s schedule',
             },
         }
 
         if langKey not in lang:
             langKey = 'id'  # default
+
+        if notifType == 'schedule-edit':
+            dayNames = {
+                'id': ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+                'en': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+            }
+            data['dayName'] = dayNames[langKey][data['day']]
 
         return lang[langKey][notifType].format(**data)
 
