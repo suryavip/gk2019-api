@@ -67,7 +67,7 @@ class Assignment(Resource):
                     'assignmentId': aid,
                     'subject': args['subject'],
                 },
-                tag='assignment-new-{}'.format(owner),
+                tag='assignment-{}'.format(aid),
             )
             rdbPathUpdate = ['poke/{}/assignment/{}'.format(u, owner) for u in mog.insider]
         else:
@@ -136,7 +136,7 @@ class Assignment(Resource):
                     'assignmentId': aid,
                     'subject': self.getSubject(mysqlCon, aid),
                 },
-                tag='assignment-edit-{}'.format(aid),
+                tag='assignment-{}'.format(aid),
             )
             rdbPathUpdate = ['poke/{}/assignment/{}'.format(u, owner) for u in mog.insider]
         else:
@@ -193,7 +193,7 @@ class Assignment(Resource):
                     'assignmentId': aid,
                     'subject': subject,
                 },
-                tag='assignment-delete-{}'.format(aid),
+                tag='assignment-{}'.format(aid),
             )
             rdbPathUpdate = ['poke/{}/assignment/{}'.format(u, owner) for u in mog.insider]
         else:

@@ -64,7 +64,7 @@ class Schedule(Resource):
                     'scheduleId': scheduleId,
                     'day': args['day'],
                 },
-                tag='schedule-edit-{}'.format(scheduleId),
+                tag='schedule-{}'.format(scheduleId),
             )
             rdbPathUpdate = ['poke/{}/schedule/{}'.format(u, owner) for u in mog.insider]
         else:

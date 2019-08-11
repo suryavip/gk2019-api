@@ -72,7 +72,7 @@ class Exam(Resource):
                     'examId': eid,
                     'subject': args['subject'],
                 },
-                tag='exam-new-{}'.format(owner),
+                tag='exam-{}'.format(eid),
             )
             rdbPathUpdate = ['poke/{}/exam/{}'.format(u, owner) for u in mog.insider]
         else:
@@ -144,7 +144,7 @@ class Exam(Resource):
                     'examId': eid,
                     'subject': self.getSubject(mysqlCon, eid),
                 },
-                tag='exam-edit-{}'.format(eid),
+                tag='exam-{}'.format(eid),
             )
             rdbPathUpdate = ['poke/{}/exam/{}'.format(u, owner) for u in mog.insider]
         else:
@@ -201,7 +201,7 @@ class Exam(Resource):
                     'examId': eid,
                     'subject': subject,
                 },
-                tag='exam-delete-{}'.format(eid),
+                tag='exam-{}'.format(eid),
             )
             rdbPathUpdate = ['poke/{}/exam/{}'.format(u, owner) for u in mog.insider]
         else:
