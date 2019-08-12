@@ -13,7 +13,7 @@ class Notification(Resource):
         fbc = FirebaseCon(args['X-idToken'])
 
         notif = mysqlCon.rQuery(
-            'SELECT notificationType, notificationTime, notificationData FROM notificationdata WHERE targetUserId = %s',
+            'SELECT notificationType, notificationTime, notificationData FROM notificationdata WHERE targetUserId = %s ORDER BY notificationTime DESC LIMIT 10',
             (fbc.uid,)
         )
         result = [{
