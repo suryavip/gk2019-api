@@ -137,7 +137,7 @@ class SendNotification():
             try:
                 r = requests.post('https://fcm.googleapis.com/fcm/send', timeout=3, data=json.dumps(pushData), headers=headers)
                 if r.status_code != 200:
-                    print('failed to send fcm')
+                    print('failed to send push notif')
                     print(r.status_code)
                     print(r.text)
             except requests.exceptions.Timeout:
