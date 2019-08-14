@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Waktu pembuatan: 30 Jul 2019 pada 17.03
--- Versi server: 10.1.40-MariaDB-cll-lve
+-- Waktu pembuatan: 14 Agu 2019 pada 15.29
+-- Versi server: 10.1.41-MariaDB-cll-lve
 -- Versi PHP: 7.2.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -127,6 +127,19 @@ CREATE TABLE `notificationdata` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `opiniondata`
+--
+
+CREATE TABLE `opiniondata` (
+  `ownerUserId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `assignmentId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `examId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `checked` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `scheduledata`
 --
 
@@ -212,6 +225,14 @@ ALTER TABLE `notificationdata`
   ADD KEY `notificationTime` (`notificationTime`);
 
 --
+-- Indeks untuk tabel `opiniondata`
+--
+ALTER TABLE `opiniondata`
+  ADD PRIMARY KEY (`ownerUserId`,`assignmentId`,`examId`),
+  ADD KEY `assignmentId` (`assignmentId`),
+  ADD KEY `examId` (`examId`);
+
+--
 -- Indeks untuk tabel `scheduledata`
 --
 ALTER TABLE `scheduledata`
@@ -261,6 +282,14 @@ ALTER TABLE `memberdata`
 --
 ALTER TABLE `notificationdata`
   ADD CONSTRAINT `notificationdata_ibfk_2` FOREIGN KEY (`targetUserId`) REFERENCES `userdata` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `opiniondata`
+--
+ALTER TABLE `opiniondata`
+  ADD CONSTRAINT `opiniondata_ibfk_1` FOREIGN KEY (`ownerUserId`) REFERENCES `userdata` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `opiniondata_ibfk_2` FOREIGN KEY (`assignmentId`) REFERENCES `assignmentdata` (`assignmentId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `opiniondata_ibfk_3` FOREIGN KEY (`examId`) REFERENCES `examdata` (`examId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `scheduledata`
