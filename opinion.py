@@ -27,8 +27,11 @@ class Opinion(Resource):
         else:
             abort(400, code='assignmentId or examId is required')
 
+        oid = '{}opinion{}'.format(fbc.uid, args[parentCol])
+
         # store data
         mysqlCon.insertQuery('opiniondata', [{
+            'opinionId': oid,
             'ownerUserId': fbc.uid,
             parentCol: args[parentCol],
             'checked': args['checked'],
