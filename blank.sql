@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Waktu pembuatan: 14 Agu 2019 pada 15.29
+-- Waktu pembuatan: 14 Agu 2019 pada 16.17
 -- Versi server: 10.1.41-MariaDB-cll-lve
 -- Versi PHP: 7.2.7
 
@@ -131,9 +131,10 @@ CREATE TABLE `notificationdata` (
 --
 
 CREATE TABLE `opiniondata` (
+  `opinionId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `ownerUserId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `assignmentId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `examId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `assignmentId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `examId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `checked` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
@@ -228,9 +229,10 @@ ALTER TABLE `notificationdata`
 -- Indeks untuk tabel `opiniondata`
 --
 ALTER TABLE `opiniondata`
-  ADD PRIMARY KEY (`ownerUserId`,`assignmentId`,`examId`),
+  ADD PRIMARY KEY (`opinionId`),
   ADD KEY `assignmentId` (`assignmentId`),
-  ADD KEY `examId` (`examId`);
+  ADD KEY `examId` (`examId`),
+  ADD KEY `ownerUserId` (`ownerUserId`);
 
 --
 -- Indeks untuk tabel `scheduledata`
@@ -287,9 +289,9 @@ ALTER TABLE `notificationdata`
 -- Ketidakleluasaan untuk tabel `opiniondata`
 --
 ALTER TABLE `opiniondata`
-  ADD CONSTRAINT `opiniondata_ibfk_1` FOREIGN KEY (`ownerUserId`) REFERENCES `userdata` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `opiniondata_ibfk_2` FOREIGN KEY (`assignmentId`) REFERENCES `assignmentdata` (`assignmentId`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `opiniondata_ibfk_3` FOREIGN KEY (`examId`) REFERENCES `examdata` (`examId`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `opiniondata_ibfk_1` FOREIGN KEY (`assignmentId`) REFERENCES `assignmentdata` (`assignmentId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `opiniondata_ibfk_2` FOREIGN KEY (`examId`) REFERENCES `examdata` (`examId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `opiniondata_ibfk_3` FOREIGN KEY (`ownerUserId`) REFERENCES `userdata` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `scheduledata`
