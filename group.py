@@ -73,7 +73,7 @@ class Group(Resource):
             (args['name'], args['school'], gid)
         )
         if mysqlCon.cursor.rowcount < 1:
-            abort(400, code='no changes')
+            return self.get()
 
         # send notif to insider except self
         SendNotification(

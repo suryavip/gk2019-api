@@ -50,6 +50,9 @@ class Schedule(Resource):
             'data': json.dumps(args['data'])
         }], updateOnDuplicate=True)
 
+        if mysqlCon.cursor.rowcount < 1:
+            return self.get(owner)
+
         rdbPathUpdate = []
         if len(mog.all) > 0:
             # send notif to insider except self

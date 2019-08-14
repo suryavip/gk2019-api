@@ -128,7 +128,7 @@ class Exam(Resource):
         count += mysqlCon.cursor.rowcount
 
         if count < 1:
-            abort(400, code='no changes')
+            return self.get(owner)
 
         rdbPathUpdate = []
         if len(mog.all) > 0:
