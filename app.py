@@ -13,6 +13,7 @@ from member import Member
 from schedule import Schedule
 from assignment import Assignment
 from exam import Exam
+from opinion import Opinion
 
 app = Flask(__name__, static_url_path='')
 app.secret_key = PrivateConfig.flaskSecretKey
@@ -70,6 +71,9 @@ api.add_resource(Assignment, '/assignment/<string:owner>')
 
 # cache channel: exam/<owner>
 api.add_resource(Exam, '/exam/<string:owner>')
+
+# cache channel: opinion
+api.add_resource(Opinion, '/opinion')
 
 if __name__ == '__main__':
     app.run(debug=True)
