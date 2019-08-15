@@ -101,8 +101,11 @@ class Schedule(Resource):
             (owner,)
         )
 
-        result = {}
+        result = []
         for (scheduleId, data) in schedule:
-            result[scheduleId] = json.loads(data)
+            result.append({
+                'scheduleId': scheduleId,
+                'data': json.loads(data),
+            })
 
         return result

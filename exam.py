@@ -235,12 +235,13 @@ class Exam(Resource):
             (owner,)
         )
 
-        result = {}
+        preResult = {}
         for (examId, subject, examDate, examTime, note) in exam:
             eTime = None
             if examTime != None:
                 eTime = (datetime.min + examTime).time().isoformat(timespec='minutes')
-            result[examId] = {
+            preResult[examId] = {
+                'examId': examId,
                 'subject': subject,
                 'examDate': examDate.isoformat(),
                 'examTime': eTime,
@@ -248,18 +249,20 @@ class Exam(Resource):
                 'attachment': [],
             }
 
-        if len(result.keys()) > 0:
-            q = ['%s'] * len(result.keys())
+        if len(preResult.keys()) > 0:
+            q = ['%s'] * len(preResult.keys())
             q = ','.join(q)
             attachment = mysqlCon.rQuery(
                 'SELECT attachmentId, originalFilename, examId FROM attachmentdata WHERE examId IN ({})'.format(q),
-                tuple(result.keys())
+                tuple(preResult.keys())
             )
 
             for (attachmentId, originalFilename, examId) in attachment:
-                result[examId]['attachment'].append({
+                preResult[examId]['attachment'].append({
                     'attachmentId': attachmentId,
                     'originalFilename': originalFilename,
                 })
+
+        result = [preResult[examId] for examId in preResult]
 
         return result

@@ -110,13 +110,12 @@ class Group(Resource):
             'SELECT groupdata.groupId, name, school, level FROM groupdata JOIN memberdata ON groupdata.groupId = memberdata.groupId WHERE memberdata.userId = %s',
             (fbc.uid,)
         )
-        result = {}
-        for (groupId, name, school, level) in group:
-            result[groupId] = {
-                'name': name,
-                'school': school,
-                'level': level,
-            }
+        result = [{
+            'groupId': groupId,
+            'name': name,
+            'school': school,
+            'level': level,
+        } for (groupId, name, school, level) in group]
 
         return result
 

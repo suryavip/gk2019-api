@@ -1,10 +1,6 @@
-lang = {
-    'a': '{a} comes before {b}',
-    'b': '{c} is {c} and then {d}',
+a = {
+    'a': 'aaa',
 }
 
-print(lang['a'].format(**{
-    'b': 'A',
-    'a': 'BBB',
-    'c': 'aaa',
-}))
+for i in a:
+    print(a[i])

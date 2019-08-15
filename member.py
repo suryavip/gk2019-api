@@ -248,10 +248,13 @@ class Member(Resource):
         if mog.rStatus != 'admin' and mog.rStatus != 'member':
             abort(404, code='requester is not insider')
 
-        result = {}
+        result = []
         for i in mog.all:
             if mog.rStatus == 'member' and i['level'] == 'pending':
                 continue
-            result[i['userId']] = i['level']
+            result.append({
+                'userId': i['userId'],
+                'level': i['level'],
+            })
 
         return result
