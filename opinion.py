@@ -56,19 +56,18 @@ class Opinion(Resource):
         fbc = FirebaseCon(args['X-idToken'])
 
         opinion = mysqlCon.rQuery(
-            'SELECT opinionId, assignmentId, examId, checked FROM opiniondata WHERE ownerUserId = %s',
+            'SELECT assignmentId, examId, checked FROM opiniondata WHERE ownerUserId = %s',
             (fbc.uid,)
         )
 
         result = []
-        for (opinionId, assignmentId, examId, checked) in opinion:
+        for (assignmentId, examId, checked) in opinion:
             if assignmentId != None:
                 parentId = assignmentId
             else:
                 parentId = examId
 
             result.append({
-                'opinionId': opinionId,
                 'parentId': parentId,
                 'checked': checked,
             })
