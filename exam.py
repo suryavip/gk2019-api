@@ -20,7 +20,7 @@ class Exam(Resource):
         parser.add_argument('examDate', required=True, help='examDate')
         parser.add_argument('examTime', default=None)
         parser.add_argument('note', default=None)
-        parser.add_argument('attachments', default=[], action='append', type=dict)
+        parser.add_argument('attachment', default=[], action='append', type=dict)
         args = parser.parse_args()
 
         if len(args['subject']) < 1:
@@ -29,7 +29,7 @@ class Exam(Resource):
             abort(400, code='invalid examDate format')
         if args['examTime'] != None and verifyTime(args['examTime']) != True:
             abort(400, code='invalid examTime format')
-        if validateAttachment(args['attachments']) != True:
+        if validateAttachment(args['attachment']) != True:
             abort(400, code='invalid attachments')
 
         fbc = FirebaseCon(args['X-idToken'])
@@ -56,7 +56,7 @@ class Exam(Resource):
         }])
 
         # store attachments
-        updateAttachment(mysqlCon, args['attachments'], ownerCol, owner, 'examId', eid)
+        updateAttachment(mysqlCon, args['attachment'], ownerCol, owner, 'examId', eid)
 
         rdbPathUpdate = []
         if len(mog.all) > 0:
@@ -93,14 +93,14 @@ class Exam(Resource):
         parser.add_argument('examDate', required=True, help='examDate')
         parser.add_argument('examTime', default=None)
         parser.add_argument('note', default=None)
-        parser.add_argument('attachments', default=[], action='append', type=dict)
+        parser.add_argument('attachment', default=[], action='append', type=dict)
         args = parser.parse_args()
 
         if verifyDate(args['examDate']) != True:
             abort(400, code='invalid examDate format')
         if args['examTime'] != None and verifyTime(args['examTime']) != True:
             abort(400, code='invalid examTime format')
-        if validateAttachment(args['attachments']) != True:
+        if validateAttachment(args['attachment']) != True:
             abort(400, code='invalid attachments')
 
         fbc = FirebaseCon(args['X-idToken'])
@@ -124,7 +124,7 @@ class Exam(Resource):
         count = mysqlCon.cursor.rowcount
 
         # update attachments
-        updateAttachment(mysqlCon, args['attachments'], ownerCol, owner, 'examId', eid)
+        updateAttachment(mysqlCon, args['attachment'], ownerCol, owner, 'examId', eid)
         count += mysqlCon.cursor.rowcount
 
         if count < 1:
