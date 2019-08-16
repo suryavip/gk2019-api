@@ -16,6 +16,7 @@ class Exam(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
         parser.add_argument('X-timestamp', required=True, type=int, location='headers')
+        parser.add_argument('examId', default='')
         parser.add_argument('subject', required=True, help='subject')
         parser.add_argument('examDate', required=True, help='examDate')
         parser.add_argument('examTime', default=None)
@@ -40,10 +41,10 @@ class Exam(Resource):
             ownerCol = 'ownerGroupId'
             if mog.rStatus != 'admin' and mog.rStatus != 'member':
                 abort(400, code='requester is not in group')
+            eid = str(uuid.uuid4())
         else:
             ownerCol = 'ownerUserId'
-
-        eid = str(uuid.uuid4())
+            eid = str(uuid.uuid4()) if args['examId'] == '' else args['examId']
 
         # store data
         mysqlCon.insertQuery('examdata', [{

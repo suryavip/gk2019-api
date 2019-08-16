@@ -15,6 +15,7 @@ class Assignment(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
         parser.add_argument('X-timestamp', required=True, type=int, location='headers')
+        parser.add_argument('assignmentId', default='')
         parser.add_argument('subject', required=True, help='subject')
         parser.add_argument('dueDate', required=True, help='dueDate')
         parser.add_argument('note', default=None)
@@ -36,10 +37,10 @@ class Assignment(Resource):
             ownerCol = 'ownerGroupId'
             if mog.rStatus != 'admin' and mog.rStatus != 'member':
                 abort(400, code='requester is not in group')
+            aid = str(uuid.uuid4())
         else:
             ownerCol = 'ownerUserId'
-
-        aid = str(uuid.uuid4())
+            aid = str(uuid.uuid4()) if args['assignmentId'] == '' else args['assignmentId']
 
         # store data
         mysqlCon.insertQuery('assignmentdata', [{
