@@ -50,6 +50,7 @@ class Test(Resource):
         destination = bucket.blob('dest/dest.jpg')
         destination.rewrite(source)
         source.delete()
+        # could also use bucket.delete_blobs(['source', 'source'])
 
         # cleanup old temporary
         oldTemp = bucket.list_blobs(prefix='2019-08-19/')
