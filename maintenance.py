@@ -3,7 +3,7 @@ from flask_restful import Resource
 from util import updateAttachment
 
 from connection import FirebaseCon, MysqlCon
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class CleanUp(Resource):
@@ -21,6 +21,8 @@ class CleanUp(Resource):
         self.cleanExpiredExams()
 
         self.cleanDeletedAttachments()
+
+        self.cleanTemporaryAttachments()
 
         self.mysqlCon.db.commit()
 
@@ -121,3 +123,16 @@ class CleanUp(Resource):
             tuple(aid)
         )
         self.log.write('tracked attachments are cleaned up ({})\n'.format(self.mysqlCon.cursor.rowcount))
+
+    def cleanTemporaryAttachments(self):
+        utcYesterday = datetime.utcnow() - timedelta(days=1)
+        utcYesterdayStr = utcYesterday.strftime('%Y/%m/%d')
+        prefix = 'temp_attachment/{}/'.format(utcYesterdayStr)
+
+        bucket = self.fbc.storage.bucket()
+        target = bucket.list_blobs(prefix=prefix)
+        targetList = list(target)
+        self.log.write('cleaning up yesterday\'s temporary attachments ({}) ({})...\n'.format(utcYesterdayStr, len(targetList)))
+        bucket.delete_blobs(targetList)
+
+        self.log.write('yesterday\'s temporary attachments cleaned\n')
