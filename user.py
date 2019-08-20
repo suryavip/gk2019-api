@@ -106,8 +106,9 @@ class User(Resource):
                 continue
             if len(mog.byLevel['member']) == 0:
                 # no one left on group, just this user, which will delete account
-                # delete group
+                # delete group and attachment for this group
                 mysqlCon.wQuery('DELETE FROM groupdata WHERE groupId = %s', (groupId,))
+                mysqlCon.wQuery('UPDATE attachmentdata SET deleted = 1 WHERE ownerGroupId = %s', (groupId,))
                 # delete group
                 del rdbUpdate['group/{}/lastChange'.format(groupId)]
                 rdbUpdate['group/{}'.format(groupId)] = None
