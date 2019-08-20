@@ -4,6 +4,7 @@ from membership import MembersOfGroup
 from sendNotification import SendNotification
 from util import getGroupName, getSingleField, verifyDate, validateAttachment, updateAttachment
 import uuid
+from datetime import datetime
 
 
 class Assignment(Resource):
@@ -20,6 +21,7 @@ class Assignment(Resource):
         parser.add_argument('dueDate', required=True, help='dueDate')
         parser.add_argument('note', default=None)
         parser.add_argument('attachment', default=[], action='append', type=dict)
+        parser.add_argument('attachmentUploadDate', default=None) # this is to prevent attachment uploaded on date A but this request is proceeded on date B
         args = parser.parse_args()
 
         if len(args['subject']) < 1:
@@ -28,6 +30,8 @@ class Assignment(Resource):
             abort(400, code='invalid dueDate format')
         if validateAttachment(args['attachment']) != True:
             abort(400, code='invalid attachments')
+        if verifyDate(args['attachmentUploadDate']) != True:
+            args['attachmentUploadDate'] = datetime.utcnow().strftime('%Y-%m-%d')
 
         fbc = FirebaseCon(args['X-idToken'])
 
@@ -89,12 +93,15 @@ class Assignment(Resource):
         parser.add_argument('dueDate', required=True, help='dueDate')
         parser.add_argument('note', default=None)
         parser.add_argument('attachment', default=[], action='append', type=dict)
+        parser.add_argument('attachmentUploadDate', default=None) # this is to prevent attachment uploaded on date A but this request is proceeded on date B
         args = parser.parse_args()
 
         if verifyDate(args['dueDate']) != True:
             abort(400, code='invalid dueDate format')
         if validateAttachment(args['attachment']) != True:
             abort(400, code='invalid attachments')
+        if verifyDate(args['attachmentUploadDate']) != True:
+            args['attachmentUploadDate'] = datetime.utcnow().strftime('%Y-%m-%d')
 
         fbc = FirebaseCon(args['X-idToken'])
 
