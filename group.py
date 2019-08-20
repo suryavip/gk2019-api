@@ -117,6 +117,12 @@ class Group(Resource):
             'level': level,
         } for (groupId, name, school, level) in group]
 
+        groupById = {}
+        for g in result:
+            groupById[g['groupId']] = g['level']
+        customToken = fbc.auth.create_custom_token(fbc.uid, {'groups': groupById})
+        customToken = (customToken).decoded()
+
         return result
 
 
