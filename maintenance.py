@@ -97,6 +97,7 @@ class CleanUp(Resource):
         for (a, u, g) in c:
             i = u if u != None else g
             path.append('attachment/{}/{}'.format(i, a))
+            path.append('attachment/{}/{}_thumb'.format(i, a))
 
         self.log.write('cleaning deleted attachments ({})...\n'.format(len(aid)))
         if len(aid) < 1:
