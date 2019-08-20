@@ -91,4 +91,11 @@ def moveFromTempAttachment(fbc, uploadDate, attachments, owner):
             destination.rewrite(source)
             toBeDeleted.append(source)
 
+        # handle thumbnail too
+        thumb = bucket.blob('temp_attachment/{}/{}/{}_thumb'.format(formatedDate, requester, a['attachmentId']))
+        if thumb.exists():
+            thumbD = bucket.blob('attachment/{}/{}_thumb'.format(owner, a['attachmentId']))
+            thumbD.rewrite(thumb)
+            toBeDeleted.append(thumb)
+
     bucket.delete_blobs(toBeDeleted)
