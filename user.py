@@ -137,6 +137,7 @@ class User(Resource):
             }, default=self.myconverter))
 
         mysqlCon.wQuery("DELETE FROM userdata WHERE userId = %s", (fbc.uid,))
+        mysqlCon.wQuery('UPDATE attachmentdata SET deleted = 1 WHERE ownerUserId = %s', (fbc.uid,))
 
         # delete user
         fbc.auth.delete_user(fbc.uid)
