@@ -3,8 +3,6 @@ from flask import Flask, request
 from flask_restful import Api, Resource
 from privateConfig import PrivateConfig
 
-from connection import FirebaseCon
-
 from user import User, Profiles
 from fcmToken import FCMToken
 from maintenance import CleanUp
@@ -42,23 +40,6 @@ def after_request(response):
 
 class Test(Resource):
     def get(self):
-        fbc = FirebaseCon()
-        bucket = fbc.storage.bucket()
-
-        # moving from temp to permanent path
-        source = bucket.blob('source/source.jpg')
-        if source.exists():
-            destination = bucket.blob('dest/dest.jpg')
-            destination.rewrite(source)
-            source.delete()
-        # could also use bucket.delete_blobs(['source', 'source'])
-
-        # cleanup old temporary
-        '''oldTemp = bucket.list_blobs(prefix='2019-08-19/')
-        oldBlobs = list(oldTemp)
-        print(len(oldBlobs))
-        bucket.delete_blobs(oldBlobs)'''
-        
         return {'hello': 'World'}
 
 
