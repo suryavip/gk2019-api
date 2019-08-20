@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import datetime, date, time
 
 def getGroupName(mysqlCon, gid):
     # getting old data
@@ -71,7 +71,7 @@ def updateAttachment(mysqlCon, new, ownerCol, owner, parentColName, parentId):
         'attachmentId': a['attachmentId'],
         ownerCol: owner,
         parentColName: parentId,
-        'originalFilename': a['originalFilename'],
+        'originalFilename': None if 'originalFilename' not in a else a['originalFilename'],
     } for a in new]
 
     if len(attachmentdata) > 0:
@@ -80,7 +80,7 @@ def updateAttachment(mysqlCon, new, ownerCol, owner, parentColName, parentId):
 def moveFromTempAttachment(fbc, uploadDate, attachments, owner):
     requester = fbc.uid
     bucket = fbc.storage.bucket()
-    formatedDate = date.fromisoformat(uploadDate).strftime('%Y/%m/%d')
+    formatedDate = datetime.strptime(uploadDate, '%Y-%m-%d').strftime('%Y/%m/%d')
 
     toBeDeleted = []
 
