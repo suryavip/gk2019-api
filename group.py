@@ -123,7 +123,10 @@ class Group(Resource):
         customToken = fbc.auth.create_custom_token(fbc.uid, {'groups': groupById})
         customToken = (customToken).decoded()
 
-        return result
+        return {
+            'groups': result,
+            'customToken': customToken,
+        }
 
 
 class GroupInfo(Resource):
