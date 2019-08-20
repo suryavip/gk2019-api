@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup
 from sendNotification import SendNotification
-from util import getGroupName, getSingleField, verifyDate, validateAttachment, updateAttachment
+from util import getGroupName, getSingleField, verifyDate, validateAttachment, updateAttachment, moveFromTempAttachment
 import uuid
 from datetime import datetime
 
@@ -57,6 +57,7 @@ class Assignment(Resource):
 
         # store attachments
         updateAttachment(mysqlCon, args['attachment'], ownerCol, owner, 'assignmentId', aid)
+        moveFromTempAttachment(fbc, args['attachmentUploadDate'], args['attachment'], owner)
 
         rdbPathUpdate = []
         if len(mog.all) > 0:
@@ -126,6 +127,7 @@ class Assignment(Resource):
         # update attachments
         updateAttachment(mysqlCon, args['attachment'], ownerCol, owner, 'assignmentId', aid)
         count += mysqlCon.cursor.rowcount
+        moveFromTempAttachment(fbc, args['attachmentUploadDate'], args['attachment'], owner)
 
         if count < 1:
             return self.get(owner)

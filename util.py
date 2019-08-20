@@ -76,3 +76,19 @@ def updateAttachment(mysqlCon, new, ownerCol, owner, parentColName, parentId):
 
     if len(attachmentdata) > 0:
         mysqlCon.insertQuery('attachmentdata', attachmentdata, updateOnDuplicate=True)
+
+def moveFromTempAttachment(fbc, uploadDate, attachments, owner):
+    requester = fbc.uid
+    bucket = fbc.storage.bucket()
+    formatedDate = date.fromisoformat(uploadDate).strftime('%Y/%m/%d')
+
+    toBeDeleted = []
+
+    for a in attachments:
+        source = bucket.blob('temp_attachment/{}/{}/{}'.format(formatedDate, requester, a['attachmentId']))
+        if source.exists():
+            destination = bucket.blob('attachment/{}/{}'.format(owner, a['attachmentId']))
+            destination.rewrite(source)
+            toBeDeleted.append(source)
+
+    bucket.delete_blobs(toBeDeleted)
