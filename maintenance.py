@@ -127,7 +127,16 @@ class CleanUp(Resource):
 
     def cleanTemporaryAttachments(self):
         utcYesterday = datetime.utcnow() - timedelta(days=1)
-        # its oke to be 1 day, since this maintenance isn't running exactly at UTC+0. (jagoanhosting server time is UTC+7)
+        '''
+        its oke to be 1 day, since this maintenance isn't running exactly at UTC+0. (jagoanhosting server time is UTC+7)
+
+        for example:
+            temporary are created 2018-08-20(UTC+0)
+            temporary will be cleaned up at 2018-08-21 17:00(UTC+0) or 2018-08-22 00:00(UTC+7)
+            
+            if temporary uploaded on 20(UTC+0) but commited on 21(UTC+0), temporary uploaded on 20 will still exist. it will be cleaned up 17hr after UTC's day changed
+        '''
+
         utcYesterdayStr = utcYesterday.strftime('%Y/%m/%d')
         prefix = 'temp_attachment/{}/'.format(utcYesterdayStr)
 
