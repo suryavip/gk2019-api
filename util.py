@@ -96,7 +96,6 @@ def actualMoveFromTempAttachment(fbc, uploadDate, attachments, owner):
         path = 'temp_attachment/{}/{}/{}'.format(formatedDate, requester, a['attachmentId'])
         source = bucket.blob(path)
         if source.exists():
-            log.write('moving {}...\n'.format(path))
             destination = bucket.blob('attachment/{}/{}'.format(owner, a['attachmentId']))
             destination.rewrite(source)
             log.write('moved\n')
@@ -107,7 +106,6 @@ def actualMoveFromTempAttachment(fbc, uploadDate, attachments, owner):
         # handle thumbnail too
         thumb = bucket.blob('temp_attachment/{}/{}/{}_thumb'.format(formatedDate, requester, a['attachmentId']))
         if thumb.exists():
-            log.write('moving thumb\n')
             thumbD = bucket.blob('attachment/{}/{}_thumb'.format(owner, a['attachmentId']))
             thumbD.rewrite(thumb)
             log.write('thumb moved\n')
