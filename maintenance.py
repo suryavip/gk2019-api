@@ -126,7 +126,8 @@ class CleanUp(Resource):
         self.log.write('tracked attachments are cleaned up ({})\n'.format(self.mysqlCon.cursor.rowcount))
 
     def cleanTemporaryAttachments(self):
-        utcYesterday = datetime.utcnow() - timedelta(days=2)
+        utcYesterday = datetime.utcnow() - timedelta(days=1)
+        # its oke to be 1 day, since this maintenance isn't running exactly at UTC+0. (jagoanhosting server time is UTC+7)
         utcYesterdayStr = utcYesterday.strftime('%Y/%m/%d')
         prefix = 'temp_attachment/{}/'.format(utcYesterdayStr)
 
