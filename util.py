@@ -55,10 +55,13 @@ def validateAttachment(attachment):
 
 def updateAttachment(mysqlCon, new, ownerCol, owner, parentColName, parentId):
     c = mysqlCon.rQuery(
-        'SELECT attachmentId FROM attachmentdata WHERE {} = %s'.format(parentColName),
+        'SELECT attachmentId FROM attachmentdata WHERE {} = %s AND deleted = 0'.format(parentColName),
         (parentId,)
     )
-    deleted = [aid for (aid,) in c if aid not in new]
+    notDeleted = [a['attachmentId'] for a in new]
+    deleted = [aid for (aid,) in c if aid not in notDeleted]
+
+    changed = False
     
     if len(deleted) > 0:
         q = ['%s'] * len(deleted)
@@ -67,6 +70,8 @@ def updateAttachment(mysqlCon, new, ownerCol, owner, parentColName, parentId):
             'UPDATE attachmentdata SET deleted = 1 WHERE attachmentId IN ({})'.format(q),
             tuple(deleted)
         )
+        if mysqlCon.cursor.rowcount > 0:
+            changed = True
 
     attachmentdata = [{
         'attachmentId': a['attachmentId'],
@@ -77,6 +82,10 @@ def updateAttachment(mysqlCon, new, ownerCol, owner, parentColName, parentId):
 
     if len(attachmentdata) > 0:
         mysqlCon.insertQuery('attachmentdata', attachmentdata, updateOnDuplicate=True)
+        if mysqlCon.cursor.rowcount > 0:
+            changed = True
+
+    return changed
 
 def moveFromTempAttachment(fbc, uploadDate, attachments, owner):
     threading.Thread(target=actualMoveFromTempAttachment, args=[fbc, uploadDate, attachments, owner]).start()
