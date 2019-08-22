@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup
 from sendNotification import SendNotification
-from util import getGroupName, getSingleField, verifyDate, validateAttachment, updateAttachment
+from util import getGroupName, getSingleField, verifyDate, validateAttachment
 import uuid
 
 

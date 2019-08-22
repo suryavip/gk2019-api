@@ -1,7 +1,5 @@
 from flask_restful import Resource
 
-from util import updateAttachment
-
 from connection import FirebaseCon, MysqlCon
 from datetime import datetime, timedelta
 
