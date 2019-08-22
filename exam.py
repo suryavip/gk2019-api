@@ -129,14 +129,13 @@ class Exam(Resource):
             'UPDATE examdata SET examDate = %s, examTime = %s, note = %s WHERE examId = %s AND {} = %s'.format(ownerCol),
             (args['examDate'], args['examTime'], args['note'], eid, owner)
         )
-        count = mysqlCon.cursor.rowcount
+        changed = mysqlCon.cursor.rowcount > 0
 
         # update attachments
-        updateAttachment(mysqlCon, args['attachment'], ownerCol, owner, 'examId', eid)
-        count += mysqlCon.cursor.rowcount
+        changed2 = updateAttachment(mysqlCon, args['attachment'], ownerCol, owner, 'examId', eid)
         moveFromTempAttachment(fbc, args['attachmentUploadDate'], args['attachment'], owner)
 
-        if count < 1:
+        if changed == False and changed2 == False:
             return self.get(owner)
 
         rdbPathUpdate = []
@@ -262,7 +261,7 @@ class Exam(Resource):
             q = ['%s'] * len(preResult.keys())
             q = ','.join(q)
             attachment = mysqlCon.rQuery(
-                'SELECT attachmentId, originalFilename, examId FROM attachmentdata WHERE examId IN ({})'.format(q),
+                'SELECT attachmentId, originalFilename, examId FROM attachmentdata WHERE examId IN ({}) AND deleted = 0'.format(q),
                 tuple(preResult.keys())
             )
 

@@ -122,14 +122,13 @@ class Assignment(Resource):
             'UPDATE assignmentdata SET dueDate = %s, note = %s WHERE assignmentId = %s AND {} = %s'.format(ownerCol),
             (args['dueDate'], args['note'], aid, owner)
         )
-        count = mysqlCon.cursor.rowcount
+        changed = mysqlCon.cursor.rowcount > 0
 
         # update attachments
-        updateAttachment(mysqlCon, args['attachment'], ownerCol, owner, 'assignmentId', aid)
-        count += mysqlCon.cursor.rowcount
+        changed2 = updateAttachment(mysqlCon, args['attachment'], ownerCol, owner, 'assignmentId', aid)
         moveFromTempAttachment(fbc, args['attachmentUploadDate'], args['attachment'], owner)
 
-        if count < 1:
+        if changed == False and changed2 == False:
             return self.get(owner)
 
         rdbPathUpdate = []
@@ -251,7 +250,7 @@ class Assignment(Resource):
             q = ['%s'] * len(preResult.keys())
             q = ','.join(q)
             attachment = mysqlCon.rQuery(
-                'SELECT attachmentId, originalFilename, assignmentId FROM attachmentdata WHERE assignmentId IN ({})'.format(q),
+                'SELECT attachmentId, originalFilename, assignmentId FROM attachmentdata WHERE assignmentId IN ({}) AND deleted = 0'.format(q),
                 tuple(preResult.keys())
             )
 
