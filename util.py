@@ -91,13 +91,10 @@ def moveFromTempAttachment(fbc, uploadDate, attachments, owner):
     threading.Thread(target=actualMoveFromTempAttachment, args=[fbc, uploadDate, attachments, owner]).start()
 
 def actualMoveFromTempAttachment(fbc, uploadDate, attachments, owner):
-    log = open('moveFromTempAttachment.log', 'a+')
-
     requester = fbc.uid
     bucket = fbc.storage.bucket()
     formatedDate = datetime.strptime(uploadDate, '%Y-%m-%d').strftime('%Y/%m/%d')
 
-    log.write('\nmoveFromTempAttachment start: ({} attachments at {} UTC\n'.format(len(attachments), formatedDate))
 
     toBeDeleted = []
 
@@ -107,19 +104,13 @@ def actualMoveFromTempAttachment(fbc, uploadDate, attachments, owner):
         if source.exists():
             destination = bucket.blob('attachment/{}/{}'.format(owner, a['attachmentId']))
             destination.rewrite(source)
-            log.write('moved\n')
             toBeDeleted.append(source)
-        else:
-            log.write('not found\n')
 
         # handle thumbnail too
         thumb = bucket.blob('temp_attachment/{}/{}/{}_thumb'.format(formatedDate, requester, a['attachmentId']))
         if thumb.exists():
             thumbD = bucket.blob('attachment/{}/{}_thumb'.format(owner, a['attachmentId']))
             thumbD.rewrite(thumb)
-            log.write('thumb moved\n')
             toBeDeleted.append(thumb)
-        else:
-            log.write('thumb not found\n')
 
     bucket.delete_blobs(toBeDeleted)
