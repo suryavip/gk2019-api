@@ -3,6 +3,8 @@ from flask_restful import Resource
 from connection import FirebaseCon, MysqlCon
 from datetime import datetime, timedelta
 
+import os
+
 
 class CleanUp(Resource):
     def post(self):
@@ -19,8 +21,6 @@ class CleanUp(Resource):
         self.cleanExpiredExams()
 
         self.cleanDeletedAttachments()
-
-        self.cleanTemporaryAttachments()
 
         self.mysqlCon.db.commit()
 
@@ -48,7 +48,7 @@ class CleanUp(Resource):
 
         self.log.write('\n'.join(deleted))
         self.log.write('\n')
-        
+
         # delete assignment
         self.mysqlCon.wQuery(
             'DELETE FROM assignmentdata WHERE assignmentId IN ({})'.format(','.join(q)),
@@ -74,7 +74,7 @@ class CleanUp(Resource):
 
         self.log.write('\n'.join(deleted))
         self.log.write('\n')
-        
+
         # delete assignment
         self.mysqlCon.wQuery(
             'DELETE FROM examdata WHERE examId IN ({})'.format(','.join(q)),
@@ -89,31 +89,21 @@ class CleanUp(Resource):
         self.log.write('mark attachments for expired exam ({})\n'.format(self.mysqlCon.cursor.rowcount))
 
     def cleanDeletedAttachments(self):
-        c = self.mysqlCon.rQuery('SELECT attachmentId, ownerUserId, ownerGroupId FROM attachmentdata WHERE deleted = 1')
-        aid = [a for (a, u, g) in c]
-        path = []
-        for (a, u, g) in c:
-            i = u if u != None else g
-            path.append('attachment/{}/{}'.format(i, a))
-            path.append('attachment/{}/{}_thumb'.format(i, a))
+        c = self.mysqlCon.rQuery(
+            'SELECT attachmentId FROM attachmentdata WHERE deleted = 1 OR (assignmentId IS NULL AND examId IS NULL AND uploadTime < DATE_SUB(NOW(), INTERVAL 1 HOUR))'
+        )
+        aid = [a for (a,) in c]
 
-        self.log.write('cleaning deleted attachments ({})...\n'.format(len(aid)))
         if len(aid) < 1:
+            self.log.write('no attachment (file or db) need to be cleaned\n')
             return
 
-        # delete from firebase
-        notFound = []
+        self.log.write('cleaning deleted and expired-temporary attachments ({})...\n'.format(len(aid)))
 
-        def reportNotFound(p):
-            notFound.append(p)
-
-        bucket = self.fbc.storage.bucket()
-        bucket.delete_blobs(path, on_error=reportNotFound)
-
-        # log if error occours
-        if len(notFound) > 0:
-            self.log.write('some attachments ({}) not found on firebase storage:\n'.format(len(notFound)))
-            self.log.write('{}\n'.format('\n'.join(notFound)))
+        for a in aid:
+            target = 'attachment/{}'.format(a)
+            self.log.write('{}\n'.format(target))
+            os.remove(target)
 
         # delete tracked attachment
         self.log.write('cleaning up tracked attachments...\n')
@@ -122,26 +112,3 @@ class CleanUp(Resource):
             tuple(aid)
         )
         self.log.write('tracked attachments are cleaned up ({})\n'.format(self.mysqlCon.cursor.rowcount))
-
-    def cleanTemporaryAttachments(self):
-        utcYesterday = datetime.utcnow() - timedelta(days=1)
-        '''
-        its oke to be 1 day, since this maintenance isn't running exactly at UTC+0. (jagoanhosting server time is UTC+7)
-
-        for example:
-            temporary are created 2018-08-20(UTC+0)
-            temporary will be cleaned up at 2018-08-21 17:00(UTC+0) or 2018-08-22 00:00(UTC+7)
-            
-            if temporary uploaded on 20(UTC+0) but commited on 21(UTC+0), temporary uploaded on 20 will still exist. it will be cleaned up 17hr after UTC's day changed
-        '''
-
-        utcYesterdayStr = utcYesterday.strftime('%Y/%m/%d')
-        prefix = 'temp_attachment/{}/'.format(utcYesterdayStr)
-
-        bucket = self.fbc.storage.bucket()
-        target = bucket.list_blobs(prefix=prefix)
-        targetList = list(target)
-        self.log.write('cleaning up old temporary attachments ({}) ({})...\n'.format(utcYesterdayStr, len(targetList)))
-        bucket.delete_blobs(targetList)
-
-        self.log.write('old temporary attachments cleaned\n')
