@@ -1,3 +1,4 @@
+from rules import Rules
 from datetime import datetime, date, time
 import threading
 
@@ -41,6 +42,9 @@ def validateAttachment(attachment):
     # all attachment must be dict containing originalFilename (optional for rename on download) and attachmentId (required)
     # attachmentId is filename on firebase storage
     # on firebase, file are stored with this path: attachment/${ownerId}/${attachmentId}
+    if len(attachment) > Rules.maxAttachmentPerItem:
+        return False
+        
     for a in attachment:
         if isinstance(a, dict) != True:
             return False
