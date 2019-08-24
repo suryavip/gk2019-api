@@ -33,7 +33,11 @@ class TempAttachment(Resource):
             abort(400, code='unknown type')
 
         fDest = 'storage/attachment/{}'.format(attachmentId)
-        f.save(fDest)
+        try:
+            f.save(fDest)
+        except:
+            abort(500, code='failed to write')
+
         if os.stat(fDest).st_size > Rules.maxAttachmentSize:
             os.remove(fDest)
             abort(400, code='file size is too big')
@@ -44,7 +48,12 @@ class TempAttachment(Resource):
                 abort(400, code='unknown type')
 
             tDest = 'storage/attachment/{}_thumb'.format(attachmentId)
-            f.save(tDest)
+            try:
+                t.save(tDest)
+            except:
+                os.remove(fDest)
+                abort(500, code='failed to write')
+                
             if os.stat(tDest).st_size > Rules.maxAttachmentSize:
                 os.remove(fDest)
                 os.remove(tDest)
