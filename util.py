@@ -1,6 +1,6 @@
 from rules import Rules
-from datetime import datetime, date, time
-import threading
+from datetime import date, time
+import os
 
 def getGroupName(mysqlCon, gid):
     # getting old data
@@ -89,3 +89,41 @@ def updateAttachment(mysqlCon, new, ownerCol, owner, parentColName, parentId):
             changed = True
 
     return changed
+
+
+def saveUploadedFile(source, destination, acceptedTypes, maxSize, thumbSource=None):
+    thumbDestination = '{}_thumb'.format(destination)
+
+    # check mimetype
+    if source.mimetype not in acceptedTypes:
+        return 'unknown type'
+    if thumbSource != None:
+        if thumbSource.mimetype not in acceptedTypes:
+            return 'unknown thumb type'
+
+    # try saving
+    try:
+        source.save(destination)
+    except:
+        return 'failed to write'
+    if thumbSource != None:
+        try:
+            thumbSource.save(thumbDestination)
+        except:
+            os.remove(destination)
+            return 'failed to write thumb'
+
+    # check file size
+    if os.stat(destination).st_size > maxSize:
+        os.remove(destination)
+        if thumbSource != None:
+            os.remove(thumbDestination)
+        return 'file size is too big'
+
+    if thumbSource != None:
+        if os.stat(thumbDestination).st_size > maxSize:
+            os.remove(destination)
+            os.remove(thumbDestination)
+            return 'thumb size is too big'
+
+    return True
