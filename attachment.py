@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup
 from rules import Rules
+from util import saveUploadedFile
 import uuid
 import werkzeug
 import os
@@ -28,40 +29,19 @@ class TempAttachment(Resource):
             'originalFilename': args['originalFilename'],
         }])
 
-        fDest = 'storage/attachment/{}'.format(attachmentId)
-        tDest = 'storage/attachment/{}_thumb'.format(attachmentId)
-
-        # check mimetype
-        if args['file'].mimetype not in Rules.acceptedAttachmentType:
-            abort(400, code='unknown type')
-
+        thumbSource = None
         if 'thumbnail' in args:
-            if args['thumbnail'].mimetype not in Rules.acceptedAttachmentType:
-                abort(400, code='unknown thumb type')
+            thumbSource = args['thumbnail']
 
-        # try saving
-        try:
-            args['file'].save(fDest)
-        except:
-            abort(500, code='failed to write')
-
-        if 'thumbnail' in args:
-            try:
-                args['thumbnail'].save(tDest)
-            except:
-                os.remove(fDest)
-                abort(500, code='failed to write thumb')
-
-        # check file size
-        if os.stat(fDest).st_size > Rules.maxAttachmentSize:
-            os.remove(fDest)
-            abort(400, code='file size is too big')
-
-        if 'thumbnail' in args:
-            if os.stat(tDest).st_size > Rules.maxAttachmentSize:
-                os.remove(fDest)
-                os.remove(tDest)
-                abort(400, code='thumb size is too big')
+        upload = saveUploadedFile(
+            args['file'],
+            'storage/attachment/{}'.format(attachmentId),
+            Rules.acceptedAttachmentType,
+            Rules.maxAttachmentSize,
+            thumbSource=thumbSource,
+        )
+        if isinstance(upload, str):
+            abort(400, code=upload)
 
         mysqlCon.db.commit()
 
@@ -76,6 +56,7 @@ class Attachment(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='args')
         parser.add_argument('download', default=False, type=bool, location='args')
+        parser.add_argument('thumb', default=False, type=bool, location='args')
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
@@ -103,6 +84,8 @@ class Attachment(Resource):
                 abort(400, code='requester is not in group')
 
         target = 'storage/attachment/{}'.format(aid)
+        if args['thumb'] == True:
+            target = '{}_thumb'.format(target)
 
         if args['download'] == True:
             return send_file(target, as_attachment=True, attachment_filename=originalFilename)
