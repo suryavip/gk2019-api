@@ -40,8 +40,7 @@ def verifyDate(dateInput):
 
 def validateAttachment(attachment):
     # all attachment must be dict containing originalFilename (optional for rename on download) and attachmentId (required)
-    # attachmentId is filename on firebase storage
-    # on firebase, file are stored with this path: attachment/${ownerId}/${attachmentId}
+    # attachmentId is filename on server
     if len(attachment) > Rules.maxAttachmentPerItem:
         return False
         

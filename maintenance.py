@@ -101,8 +101,8 @@ class CleanUp(Resource):
         self.log.write('cleaning deleted and expired-temporary attachments ({})...\n'.format(len(aid)))
 
         for a in aid:
-            target = 'attachment/{}'.format(a)
-            thumb = 'attachment/{}_thumb'.format(a)
+            target = 'storage/attachment/{}'.format(a)
+            thumb = 'storage/attachment/{}_thumb'.format(a)
             self.log.write('{}\n'.format(target))
             try:
                 os.remove(target)

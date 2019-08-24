@@ -32,7 +32,7 @@ class TempAttachment(Resource):
         if f.mimetype not in Rules.acceptedAttachmentType:
             abort(400, code='unknown type')
 
-        fDest = 'attachment/{}'.format(attachmentId)
+        fDest = 'storage/attachment/{}'.format(attachmentId)
         f.save(fDest)
         if os.stat(fDest).st_size > Rules.maxAttachmentSize:
             os.remove(fDest)
@@ -43,7 +43,7 @@ class TempAttachment(Resource):
             if t.mimetype not in Rules.acceptedAttachmentType:
                 abort(400, code='unknown type')
 
-            tDest = 'attachment/{}_thumb'.format(attachmentId)
+            tDest = 'storage/attachment/{}_thumb'.format(attachmentId)
             f.save(tDest)
             if os.stat(tDest).st_size > Rules.maxAttachmentSize:
                 os.remove(fDest)
@@ -61,7 +61,7 @@ class Attachment(Resource):
     def get(self, aid):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
-        parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('X-idToken', required=True, help='a', location='args')
         parser.add_argument('download', default=False, type=bool, location='args')
         args = parser.parse_args()
 
@@ -89,7 +89,7 @@ class Attachment(Resource):
             if mog.rStatus != 'admin' and mog.rStatus != 'member':
                 abort(400, code='requester is not in group')
 
-        target = 'attachment/{}'.format(aid)
+        target = 'storage/attachment/{}'.format(aid)
 
         if args['download'] == True:
             return send_file(target, as_attachment=True, attachment_filename=originalFilename)
