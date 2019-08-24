@@ -14,7 +14,7 @@ from schedule import Schedule
 from assignment import Assignment
 from exam import Exam
 from opinion import Opinion
-from attachment import TempAttachment
+from attachment import TempAttachment, Attachment
 
 app = Flask(__name__, static_url_path='')
 app.secret_key = PrivateConfig.flaskSecretKey
@@ -55,6 +55,7 @@ api.add_resource(GroupInfo, '/groupInfo/<string:gid>')
 api.add_resource(FCMToken, '/fcmToken')
 
 api.add_resource(TempAttachment, '/temp_attachment')
+api.add_resource(Attachment, '/attachment/<string:aid>')
 
 # cache table name (channel): group
 # only group channel that not need for groupId/userId
