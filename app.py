@@ -55,11 +55,11 @@ api.add_resource(GroupInfo, '/groupInfo/<string:gid>')
 
 api.add_resource(FCMToken, '/fcmToken')
 
-api.add_resource(TempAttachment, '/temp_attachment')
-api.add_resource(Attachment, '/attachment/<string:aid>')
+api.add_resource(TempAttachment, '/storage/attachment')
+api.add_resource(Attachment, '/storage/attachment/<string:aid>')
 
-api.add_resource(SelfProfilePic, '/profile_pic')
-api.add_resource(ProfilePic, '/profile_pic/<string:uid>')
+api.add_resource(SelfProfilePic, '/storage/profile_pic')
+api.add_resource(ProfilePic, '/storage/profile_pic/<string:uid>')
 
 # cache table name (channel): group
 # only group channel that not need for groupId/userId
