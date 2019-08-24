@@ -15,6 +15,7 @@ from assignment import Assignment
 from exam import Exam
 from opinion import Opinion
 from attachment import TempAttachment, Attachment
+from profile_pic import SelfProfilePic, ProfilePic
 
 app = Flask(__name__, static_url_path='')
 app.secret_key = PrivateConfig.flaskSecretKey
@@ -56,6 +57,9 @@ api.add_resource(FCMToken, '/fcmToken')
 
 api.add_resource(TempAttachment, '/temp_attachment')
 api.add_resource(Attachment, '/attachment/<string:aid>')
+
+api.add_resource(SelfProfilePic, '/profile_pic')
+api.add_resource(ProfilePic, '/profile_pic/<string:uid>')
 
 # cache table name (channel): group
 # only group channel that not need for groupId/userId
