@@ -14,6 +14,7 @@ class TempAttachment(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
         parser.add_argument('file', required=True, type=werkzeug.datastructures.FileStorage, location='files')
+        parser.add_argument('thumbnail', type=werkzeug.datastructures.FileStorage, location='files')
         parser.add_argument('originalFilename', default=None)
         args = parser.parse_args()
 
@@ -28,16 +29,26 @@ class TempAttachment(Resource):
         }])
 
         f = args['file']
-
         if f.mimetype not in Rules.acceptedAttachmentType:
             abort(400, code='unknown type')
 
-        dest = 'attachment/{}'.format(attachmentId)
-        f.save(dest)
-
-        if os.stat(dest).st_size > Rules.maxAttachmentSize:
-            os.remove(dest)
+        fDest = 'attachment/{}'.format(attachmentId)
+        f.save(fDest)
+        if os.stat(fDest).st_size > Rules.maxAttachmentSize:
+            os.remove(fDest)
             abort(400, code='file size is too big')
+
+        if 'thumbnail' in args:
+            t = args['thumbnail']
+            if t.mimetype not in Rules.acceptedAttachmentType:
+                abort(400, code='unknown type')
+
+            tDest = 'attachment/{}_thumb'.format(attachmentId)
+            f.save(tDest)
+            if os.stat(tDest).st_size > Rules.maxAttachmentSize:
+                os.remove(fDest)
+                os.remove(tDest)
+                abort(400, code='file size is too big')
 
         mysqlCon.db.commit()
 

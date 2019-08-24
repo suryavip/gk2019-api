@@ -1,6 +1,6 @@
-a = {
-    'a': 'aaa',
-}
+import os
 
-for i in a:
-    print(a[i])
+try:
+    os.remove('thereisnofile.xxx')
+except:
+    print('error')

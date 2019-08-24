@@ -102,8 +102,16 @@ class CleanUp(Resource):
 
         for a in aid:
             target = 'attachment/{}'.format(a)
+            thumb = 'attachment/{}_thumb'.format(a)
             self.log.write('{}\n'.format(target))
-            os.remove(target)
+            try:
+                os.remove(target)
+            except:
+                self.log.write('{} not found\n'.format(target))
+            try:
+                os.remove(thumb)
+            except:
+                self.log.write('{} not found\n'.format(thumb))
 
         # delete tracked attachment
         self.log.write('cleaning up tracked attachments...\n')
