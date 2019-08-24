@@ -6,7 +6,6 @@ from rules import Rules
 from util import saveUploadedFile
 import uuid
 import werkzeug
-import os
 
 
 class TempAttachment(Resource):
