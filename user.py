@@ -6,6 +6,7 @@ from datetime import datetime
 import threading
 import json
 import uuid
+import os
 
 
 class User(Resource):
@@ -77,13 +78,6 @@ class User(Resource):
             ref = fbc.db.reference('')
             ref.update(rdbUpdate)
 
-        # cleanup profile pic
-        bucket = fbc.storage.bucket()
-        bucket.delete_blobs([
-            'profile_pic/{}.jpg'.format(fbc.uid),
-            'profile_pic/{}_small.jpg'.format(fbc.uid),
-        ])
-
     def myconverter(self, o):
         if isinstance(o, datetime):
             return o.__str__()
@@ -146,6 +140,13 @@ class User(Resource):
 
         # clean up in separate thread
         threading.Thread(target=self.cleanup, args=[fbc, rdbUpdate]).start()
+
+        # clean up profile pic
+        try:
+            os.remove('storage/profile_pic/{}'.format(fbc.uid))
+            os.remove('storage/profile_pic/{}_thumb'.format(fbc.uid))
+        except:
+            pass
 
         return {}
 
