@@ -28,36 +28,40 @@ class TempAttachment(Resource):
             'originalFilename': args['originalFilename'],
         }])
 
-        f = args['file']
-        if f.mimetype not in Rules.acceptedAttachmentType:
+        fDest = 'storage/attachment/{}'.format(attachmentId)
+        tDest = 'storage/attachment/{}_thumb'.format(attachmentId)
+
+        # check mimetype
+        if args['file'].mimetype not in Rules.acceptedAttachmentType:
             abort(400, code='unknown type')
 
-        fDest = 'storage/attachment/{}'.format(attachmentId)
+        if 'thumbnail' in args:
+            if args['thumbnail'].mimetype not in Rules.acceptedAttachmentType:
+                abort(400, code='unknown thumb type')
+
+        # try saving
         try:
-            f.save(fDest)
+            args['file'].save(fDest)
         except:
             abort(500, code='failed to write')
 
+        if 'thumbnail' in args:
+            try:
+                args['thumbnail'].save(tDest)
+            except:
+                os.remove(fDest)
+                abort(500, code='failed to write thumb')
+
+        # check file size
         if os.stat(fDest).st_size > Rules.maxAttachmentSize:
             os.remove(fDest)
             abort(400, code='file size is too big')
 
         if 'thumbnail' in args:
-            t = args['thumbnail']
-            if t.mimetype not in Rules.acceptedAttachmentType:
-                abort(400, code='unknown type')
-
-            tDest = 'storage/attachment/{}_thumb'.format(attachmentId)
-            try:
-                t.save(tDest)
-            except:
-                os.remove(fDest)
-                abort(500, code='failed to write')
-                
             if os.stat(tDest).st_size > Rules.maxAttachmentSize:
                 os.remove(fDest)
                 os.remove(tDest)
-                abort(400, code='file size is too big')
+                abort(400, code='thumb size is too big')
 
         mysqlCon.db.commit()
 
