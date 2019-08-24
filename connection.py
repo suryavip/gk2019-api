@@ -1,5 +1,5 @@
 from flask_restful import abort
-from firebase_admin import db, auth, storage
+from firebase_admin import db, auth
 from privateConfig import PrivateConfig
 import mysql.connector
 import threading
@@ -19,7 +19,6 @@ class FirebaseCon:
                 abort(400, code='Token-ValueError', message='{}'.format(err))
         self.db = db
         self.auth = auth
-        self.storage = storage
 
     def updateRDBTimestamp(self, t, paths):
         # paths is list
