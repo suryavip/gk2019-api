@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Waktu pembuatan: 14 Agu 2019 pada 16.17
+-- Waktu pembuatan: 24 Agu 2019 pada 15.05
 -- Versi server: 10.1.41-MariaDB-cll-lve
 -- Versi PHP: 7.2.7
 
@@ -50,6 +50,7 @@ CREATE TABLE `attachmentdata` (
   `assignmentId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `examId` varchar(191) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `originalFilename` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `uploadTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci COMMENT='NO CONSTRAINT! JUST MARK IT AS DELETED! scheduled cleanup will handle the rest';
 
