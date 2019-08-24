@@ -19,7 +19,7 @@ class TempAttachment(Resource):
 
         fbc = FirebaseCon(args['X-idToken'])
 
-        attachmentId = uuid.uuid4()
+        attachmentId = str(uuid.uuid4())
 
         mysqlCon.insertQuery('attachmentdata', [{
             'attachmentId': attachmentId,
@@ -32,12 +32,14 @@ class TempAttachment(Resource):
         if f.mimetype not in Rules.acceptedAttachmentType:
             abort(400, code='unknown type')
 
-        dest = 'attachment/{}'.format(uuid.uuid4())
+        dest = 'attachment/{}'.format(attachmentId)
         f.save(dest)
 
         if os.stat(dest).st_size > Rules.maxAttachmentSize:
             os.remove(dest)
             abort(400, code='file size is too big')
+
+        mysqlCon.db.commit()
 
         return {
             'attachmentId': attachmentId,
@@ -49,20 +51,23 @@ class Attachment(Resource):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('download', default=False, type=bool, location='args')
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
 
         attachment = mysqlCon.rQuery(
-            'SELECT ownerUserId, ownerGroupId, originalFilename FROM attachmentdata WHERE attachmentId = %s AND (assignmentId IS NOT NULL OR examId IS NOT NULL)',
+            'SELECT ownerUserId, ownerGroupId, originalFilename FROM attachmentdata WHERE attachmentId = %s',
             (aid,)
         )
         if len(attachment) < 1:
             abort(404, code='attachment not found')
 
         owner = None
-        for (ownerUserId, ownerGroupId) in attachment:
+        originalFilename = None
+        for (ownerUserId, ownerGroupId, fn) in attachment:
             owner = ownerUserId if ownerUserId == fbc.uid else ownerGroupId
+            originalFilename = fn
 
         if owner == None:
             abort(400, code='not owning this')
@@ -74,5 +79,8 @@ class Attachment(Resource):
                 abort(400, code='requester is not in group')
 
         target = 'attachment/{}'.format(aid)
+
+        if args['download'] == True:
+            return send_file(target, as_attachment=True, attachment_filename=originalFilename)
 
         return send_file(target)
