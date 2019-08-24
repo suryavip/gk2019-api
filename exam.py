@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse, abort
 from connection import FirebaseCon, MysqlCon
 from membership import MembersOfGroup
 from sendNotification import SendNotification
-from util import getGroupName, getSingleField, verifyDate, verifyTime, validateAttachment, updateAttachment, moveFromTempAttachment
+from util import getGroupName, getSingleField, verifyDate, verifyTime, validateAttachment, updateAttachment
 from datetime import datetime
 import uuid
 
@@ -22,7 +22,6 @@ class Exam(Resource):
         parser.add_argument('examTime', default=None)
         parser.add_argument('note', default=None)
         parser.add_argument('attachment', default=[], action='append', type=dict)
-        parser.add_argument('attachmentUploadDate', default=None) # this is to prevent attachment uploaded on date A but this request is proceeded on date B
         args = parser.parse_args()
 
         if len(args['subject']) < 1:
@@ -33,8 +32,6 @@ class Exam(Resource):
             abort(400, code='invalid examTime format')
         if validateAttachment(args['attachment']) != True:
             abort(400, code='invalid attachments')
-        if verifyDate(args['attachmentUploadDate']) != True:
-            args['attachmentUploadDate'] = datetime.utcnow().strftime('%Y-%m-%d')
 
         fbc = FirebaseCon(args['X-idToken'])
 
@@ -61,7 +58,6 @@ class Exam(Resource):
 
         # store attachments
         updateAttachment(mysqlCon, args['attachment'], ownerCol, owner, 'examId', eid)
-        moveFromTempAttachment(fbc, args['attachmentUploadDate'], args['attachment'], owner)
 
         rdbPathUpdate = []
         if len(mog.all) > 0:
@@ -99,7 +95,6 @@ class Exam(Resource):
         parser.add_argument('examTime', default=None)
         parser.add_argument('note', default=None)
         parser.add_argument('attachment', default=[], action='append', type=dict)
-        parser.add_argument('attachmentUploadDate', default=None) # this is to prevent attachment uploaded on date A but this request is proceeded on date B
         args = parser.parse_args()
 
         if verifyDate(args['examDate']) != True:
@@ -108,8 +103,6 @@ class Exam(Resource):
             abort(400, code='invalid examTime format')
         if validateAttachment(args['attachment']) != True:
             abort(400, code='invalid attachments')
-        if verifyDate(args['attachmentUploadDate']) != True:
-            args['attachmentUploadDate'] = datetime.utcnow().strftime('%Y-%m-%d')
 
         fbc = FirebaseCon(args['X-idToken'])
 
@@ -133,7 +126,6 @@ class Exam(Resource):
 
         # update attachments
         changed2 = updateAttachment(mysqlCon, args['attachment'], ownerCol, owner, 'examId', eid)
-        moveFromTempAttachment(fbc, args['attachmentUploadDate'], args['attachment'], owner)
 
         if changed == False and changed2 == False:
             return self.get(owner)

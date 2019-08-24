@@ -90,31 +90,3 @@ def updateAttachment(mysqlCon, new, ownerCol, owner, parentColName, parentId):
             changed = True
 
     return changed
-
-def moveFromTempAttachment(fbc, uploadDate, attachments, owner):
-    threading.Thread(target=actualMoveFromTempAttachment, args=[fbc, uploadDate, attachments, owner]).start()
-
-def actualMoveFromTempAttachment(fbc, uploadDate, attachments, owner):
-    requester = fbc.uid
-    bucket = fbc.storage.bucket()
-    formatedDate = datetime.strptime(uploadDate, '%Y-%m-%d').strftime('%Y/%m/%d')
-
-
-    toBeDeleted = []
-
-    for a in attachments:
-        path = 'temp_attachment/{}/{}/{}'.format(formatedDate, requester, a['attachmentId'])
-        source = bucket.blob(path)
-        if source.exists():
-            destination = bucket.blob('attachment/{}/{}'.format(owner, a['attachmentId']))
-            destination.rewrite(source)
-            toBeDeleted.append(source)
-
-        # handle thumbnail too
-        thumb = bucket.blob('temp_attachment/{}/{}/{}_thumb'.format(formatedDate, requester, a['attachmentId']))
-        if thumb.exists():
-            thumbD = bucket.blob('attachment/{}/{}_thumb'.format(owner, a['attachmentId']))
-            thumbD.rewrite(thumb)
-            toBeDeleted.append(thumb)
-
-    bucket.delete_blobs(toBeDeleted)
