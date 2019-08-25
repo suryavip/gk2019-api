@@ -36,7 +36,7 @@ class ProfilePic(Resource):
         parser.add_argument('thumb', default=False, type=bool, location='args')
         args = parser.parse_args()
 
-        FirebaseCon(args['X-idToken'])
+        FirebaseCon(args['idToken'])
 
         target = 'storage/profile_pic/{}'.format(uid)
         if args['thumb'] == True:

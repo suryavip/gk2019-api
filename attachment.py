@@ -58,7 +58,7 @@ class Attachment(Resource):
         parser.add_argument('thumb', default=False, type=bool, location='args')
         args = parser.parse_args()
 
-        fbc = FirebaseCon(args['X-idToken'])
+        fbc = FirebaseCon(args['idToken'])
 
         attachment = mysqlCon.rQuery(
             'SELECT ownerUserId, ownerGroupId, originalFilename FROM attachmentdata WHERE attachmentId = %s',
