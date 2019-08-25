@@ -32,7 +32,7 @@ class SelfProfilePic(Resource):
 class ProfilePic(Resource):
     def get(self, uid):
         parser = reqparse.RequestParser()
-        parser.add_argument('X-idToken', required=True, help='a', location='args')
+        parser.add_argument('idToken', required=True, help='a', location='args')
         parser.add_argument('thumb', default=False, type=bool, location='args')
         args = parser.parse_args()
 
