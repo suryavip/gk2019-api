@@ -77,13 +77,13 @@ class Attachment(Resource):
             originalFilename = fn
 
         if owner == None:
-            abort(400, code='not owning this')
+            abort(404, code='not owning this')
 
         # check for valid privilege
         mog = MembersOfGroup(owner, args['r'])
         if len(mog.all) > 0:
             if mog.rStatus != 'admin' and mog.rStatus != 'member':
-                abort(400, code='requester is not in group')
+                abort(404, code='requester is not in group')
 
         try:
             if args['download'] == True:

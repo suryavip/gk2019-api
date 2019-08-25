@@ -39,7 +39,7 @@ class ProfilePic(Resource):
 
         requester = getSingleField(mysqlCon, 'userId', 'userdata', 'userId', args['r'], default=None)
         if requester == None:
-            abort(401, code='not authorized')
+            abort(404, code='not authorized')
 
         target = 'storage/profile_pic/{}'.format(uid)
         try:
