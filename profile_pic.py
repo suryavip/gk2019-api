@@ -1,8 +1,8 @@
 from flask import send_file
 from flask_restful import Resource, reqparse, abort
-from connection import FirebaseCon
+from connection import FirebaseCon, MysqlCon
 from rules import Rules
-from util import saveUploadedFile
+from util import saveUploadedFile, getSingleField
 import werkzeug
 
 
@@ -32,11 +32,17 @@ class SelfProfilePic(Resource):
 class ProfilePic(Resource):
     def get(self, uid):
         # uid may ended with _thumb
+        mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
-        parser.add_argument('idToken', required=True, help='a', location='args')
+        parser.add_argument('r', required=True, help='r', location='args') # requester
         args = parser.parse_args()
 
-        FirebaseCon(args['idToken'])
+        requester = getSingleField(mysqlCon, 'userId', 'userdata', 'userId', args['r'], default=None)
+        if requester == None:
+            abort(401, code='not authorized')
 
         target = 'storage/profile_pic/{}'.format(uid)
-        return send_file(target)
+        try:
+            return send_file(target)
+        except:
+            abort(404, code='not found')

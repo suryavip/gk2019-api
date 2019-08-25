@@ -54,11 +54,9 @@ class Attachment(Resource):
         # aid may ended with _thumb
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
-        parser.add_argument('idToken', required=True, help='a', location='args')
+        parser.add_argument('r', required=True, location='args') # requester
         parser.add_argument('download', default=False, type=bool, location='args')
         args = parser.parse_args()
-
-        fbc = FirebaseCon(args['idToken'])
 
         target = 'storage/attachment/{}'.format(aid)
 
@@ -75,19 +73,22 @@ class Attachment(Resource):
         owner = None
         originalFilename = None
         for (ownerUserId, ownerGroupId, fn) in attachment:
-            owner = ownerUserId if ownerUserId == fbc.uid else ownerGroupId
+            owner = ownerUserId if ownerUserId == args['r'] else ownerGroupId
             originalFilename = fn
 
         if owner == None:
             abort(400, code='not owning this')
 
         # check for valid privilege
-        mog = MembersOfGroup(owner, fbc.uid)
+        mog = MembersOfGroup(owner, args['r'])
         if len(mog.all) > 0:
             if mog.rStatus != 'admin' and mog.rStatus != 'member':
                 abort(400, code='requester is not in group')
 
-        if args['download'] == True:
-            return send_file(target, as_attachment=True, attachment_filename=originalFilename)
+        try:
+            if args['download'] == True:
+                return send_file(target, as_attachment=True, attachment_filename=originalFilename)
 
-        return send_file(target)
+            return send_file(target)
+        except:
+            abort(404, code='not found')
