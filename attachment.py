@@ -51,14 +51,19 @@ class TempAttachment(Resource):
 
 class Attachment(Resource):
     def get(self, aid):
+        # aid may ended with _thumb
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('idToken', required=True, help='a', location='args')
         parser.add_argument('download', default=False, type=bool, location='args')
-        parser.add_argument('thumb', default=False, type=bool, location='args')
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['idToken'])
+
+        target = 'storage/attachment/{}'.format(aid)
+
+        if aid.endswith('_thumb'):
+            aid.replace('_thumb', '')
 
         attachment = mysqlCon.rQuery(
             'SELECT ownerUserId, ownerGroupId, originalFilename FROM attachmentdata WHERE attachmentId = %s',
@@ -81,10 +86,6 @@ class Attachment(Resource):
         if len(mog.all) > 0:
             if mog.rStatus != 'admin' and mog.rStatus != 'member':
                 abort(400, code='requester is not in group')
-
-        target = 'storage/attachment/{}'.format(aid)
-        if args['thumb'] == True:
-            target = '{}_thumb'.format(target)
 
         if args['download'] == True:
             return send_file(target, as_attachment=True, attachment_filename=originalFilename)
