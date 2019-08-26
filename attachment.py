@@ -61,7 +61,7 @@ class Attachment(Resource):
         target = 'storage/attachment/{}'.format(aid)
 
         if aid.endswith('_thumb'):
-            aid.replace('_thumb', '')
+            aid = aid.replace('_thumb', '')
 
         attachment = mysqlCon.rQuery(
             'SELECT ownerUserId, ownerGroupId, originalFilename FROM attachmentdata WHERE attachmentId = %s',
@@ -71,10 +71,11 @@ class Attachment(Resource):
             abort(404, code='attachment not found')
 
         owner = None
-        originalFilename = None
+        originalFilename = '{}.jpg'.format(aid) # so image download will have extension and name
         for (ownerUserId, ownerGroupId, fn) in attachment:
             owner = ownerUserId if ownerUserId == args['r'] else ownerGroupId
-            originalFilename = fn
+            if fn != None:
+                originalFilename = fn
 
         if owner == None:
             abort(404, code='not owning this')
