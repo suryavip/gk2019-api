@@ -110,23 +110,12 @@ class Group(Resource):
             'SELECT groupdata.groupId, name, school, level FROM groupdata JOIN memberdata ON groupdata.groupId = memberdata.groupId WHERE memberdata.userId = %s',
             (fbc.uid,)
         )
-        result = [{
+        return [{
             'groupId': groupId,
             'name': name,
             'school': school,
             'level': level,
         } for (groupId, name, school, level) in group]
-
-        groupById = {}
-        for g in result:
-            groupById[g['groupId']] = g['level']
-        customToken = fbc.auth.create_custom_token(fbc.uid, {'groups': groupById})
-        customToken = (customToken).decode()
-
-        return {
-            'groups': result,
-            'customToken': customToken,
-        }
 
 
 class GroupInfo(Resource):
