@@ -26,12 +26,14 @@ class TempAttachment(Resource):
             # image uploaded
             thumbSource = args['thumbnail']
             args['originalFilename'] = None
+            acceptedType = Rules.acceptedAttachmentImageType
         elif args['originalFilename'] == None:
             # no thumbnail no filename. reject because image must have thumbnail and file must have filename
             abort(400, code='thumbnail or originalFilename must be provided')
         else:
             # file uploaded
             thumbSource = None
+            acceptedType = Rules.acceptedAttachmentFileType
 
         mysqlCon.insertQuery('attachmentdata', [{
             'attachmentId': attachmentId,
@@ -42,7 +44,7 @@ class TempAttachment(Resource):
         upload = saveUploadedFile(
             args['file'],
             'storage/attachment/{}'.format(attachmentId),
-            Rules.acceptedAttachmentType,
+            acceptedType,
             Rules.maxAttachmentSize,
             thumbSource=thumbSource,
         )

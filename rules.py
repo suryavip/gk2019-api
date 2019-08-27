@@ -5,8 +5,8 @@ class Rules:
     profilePicType = 'image/jpeg'
     maxAttachmentPerItem = 10
     maxAttachmentSize = 5 * 1024 * 1024
-    acceptedAttachmentType = [
-        'image/jpeg',
+    acceptedAttachmentImageType = 'image/jpeg'
+    acceptedAttachmentFileType = [
         'text/plain',
         'application/pdf',
         'application/msword',
