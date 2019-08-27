@@ -22,15 +22,22 @@ class TempAttachment(Resource):
 
         attachmentId = str(uuid.uuid4())
 
+        if 'thumbnail' in args:
+            # image uploaded
+            thumbSource = args['thumbnail']
+            args['originalFilename'] = None
+        elif args['originalFilename'] == None:
+            # no thumbnail no filename. reject because image must have thumbnail and file must have filename
+            abort(400, code='thumbnail or originalFilename must be provided')
+        else:
+            # file uploaded
+            thumbSource = None
+
         mysqlCon.insertQuery('attachmentdata', [{
             'attachmentId': attachmentId,
             'ownerUserId': fbc.uid,
             'originalFilename': args['originalFilename'],
         }])
-
-        thumbSource = None
-        if 'thumbnail' in args:
-            thumbSource = args['thumbnail']
 
         upload = saveUploadedFile(
             args['file'],
