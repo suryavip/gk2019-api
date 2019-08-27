@@ -11,8 +11,8 @@ class CleanUp(Resource):
         self.mysqlCon = MysqlCon()
         self.fbc = FirebaseCon()
         self.parentsOfAttachmentToDelete = {}
-        self.log = open('maintenance-log.log', 'a+')
-        self.log.write('\nstart: {}\n'.format(datetime.now().isoformat()))
+        self.log = open('maintenance-log/{}.log'.format(datetime.now().isoformat()), 'a+')
+        self.log.write('start\n')
 
         self.cleanOldNotifications()
 
