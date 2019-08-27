@@ -14,7 +14,7 @@ class TempAttachment(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
         parser.add_argument('file', required=True, type=werkzeug.datastructures.FileStorage, location='files')
-        parser.add_argument('thumbnail', type=werkzeug.datastructures.FileStorage, location='files')
+        parser.add_argument('thumbnail', default=None, type=werkzeug.datastructures.FileStorage, location='files')
         parser.add_argument('originalFilename', default=None)
         args = parser.parse_args()
 
@@ -22,18 +22,19 @@ class TempAttachment(Resource):
 
         attachmentId = str(uuid.uuid4())
 
-        if 'thumbnail' in args:
+        if isinstance(args['thumbnail'], werkzeug.datastructures.FileStorage):
             # image uploaded
-            thumbSource = args['thumbnail']
             args['originalFilename'] = None
             acceptedType = Rules.acceptedAttachmentImageType
-        elif args['originalFilename'] == None:
+
+        elif isinstance(args['originalFilename'], str):
+            # file uploaded
+            args['thumbnail'] = None
+            acceptedType = Rules.acceptedAttachmentFileType
+
+        else:
             # no thumbnail no filename. reject because image must have thumbnail and file must have filename
             abort(400, code='thumbnail or originalFilename must be provided')
-        else:
-            # file uploaded
-            thumbSource = None
-            acceptedType = Rules.acceptedAttachmentFileType
 
         mysqlCon.insertQuery('attachmentdata', [{
             'attachmentId': attachmentId,
@@ -46,7 +47,7 @@ class TempAttachment(Resource):
             'storage/attachment/{}'.format(attachmentId),
             acceptedType,
             Rules.maxAttachmentSize,
-            thumbSource=thumbSource,
+            thumbSource=args['thumbnail'],
         )
         if isinstance(upload, str):
             abort(400, code=upload)
