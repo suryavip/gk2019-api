@@ -2,10 +2,10 @@ class Rules:
     maxGroupPerUser = 10
     maxUserPerGroup = 70
     maxProfilePicSize = 1 * 1024 * 1024
-    profilePicType = 'image/jpeg'
+    profilePicType = ['image/jpeg']
     maxAttachmentPerItem = 10
     maxAttachmentSize = 5 * 1024 * 1024
-    acceptedAttachmentImageType = 'image/jpeg'
+    acceptedAttachmentImageType = ['image/jpeg']
     acceptedAttachmentFileType = [
         'text/plain',
         'application/pdf',
