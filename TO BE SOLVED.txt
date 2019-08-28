@@ -1,0 +1,143 @@
+15083: QUIC_SESSION
+Start Time: 2019-08-28 14:29:36.716
+
+t= 1 [st= 0]  QUIC_CHROMIUM_CLIENT_STREAM_SEND_REQUEST_HEADERS
+              --> :method: OPTIONS
+                  :authority: boostedcode.com
+                  :scheme: https
+                  :path: /project/gk2019/api/1/group
+                  pragma: no-cache
+                  cache-control: no-cache
+                  access-control-request-method: GET
+                  access-control-request-headers: content-type,x-idtoken
+                  origin: http://localhost
+                  sec-fetch-site: cross-site
+                  referer: http://localhost/gk2019/?home
+                  user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36
+                  accept-encoding: gzip, deflate, br
+                  accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6
+              --> quic_priority = 1
+              --> quic_stream_id = 9
+t= 1 [st= 0]  QUIC_SESSION_STREAM_FRAME_SENT
+              --> fin = false
+              --> length = 68
+              --> offset = 1388
+              --> stream_id = 3
+t= 1 [st= 0]  QUIC_SESSION_PACKET_SENT
+              --> packet_number = 7
+              --> sent_time_us = 2087540836
+              --> size = 94
+              --> transmission_type = 0
+t=23 [st=22]  QUIC_SESSION_PACKET_RECEIVED
+              --> peer_address = "103.27.206.15:443"
+              --> self_address = "192.168.0.107:61508"
+              --> size = 67
+t=23 [st=22]  QUIC_SESSION_UNAUTHENTICATED_PACKET_HEADER_RECEIVED
+              --> connection_id = "d0615aff573e9b92"
+              --> packet_number = 6
+              --> reset_flag = 0
+              --> version_flag = 0
+t=23 [st=22]  QUIC_SESSION_PACKET_AUTHENTICATED
+t=23 [st=22]  QUIC_SESSION_STREAM_FRAME_RECEIVED
+              --> fin = false
+              --> length = 42
+              --> offset = 397
+              --> stream_id = 3
+t=23 [st=22]  QUIC_SESSION_STREAM_FRAME_RECEIVED
+              --> fin = true
+              --> length = 0
+              --> offset = 0
+              --> stream_id = 9
+t=23 [st=22]  QUIC_CHROMIUM_CLIENT_STREAM_READ_RESPONSE_HEADERS
+              --> fin = true
+              --> :status: 200
+                  content-type: text/html; charset=utf-8
+                  allow: GET, PUT, OPTIONS, POST, HEAD
+                  access-control-allow-origin: http://localhost
+                  access-control-allow-headers: Accept, Accept-Language, Content-Language, Content-Type, X-idToken, X-timestamp
+                  access-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS
+                  content-length: 0
+                  date: Wed, 28 Aug 2019 07:29:36 GMT
+                  server: LiteSpeed
+                  alt-svc: quic=":443"; ma=2592000; v="39,43,46", h3-22=":443"; ma=2592000
+              --> quic_stream_id = 9
+t=25 [st=24]  QUIC_CHROMIUM_CLIENT_STREAM_SEND_REQUEST_HEADERS
+              --> :method: GET
+                  :authority: boostedcode.com
+                  :scheme: https
+                  :path: /project/gk2019/api/1/group
+                  pragma: no-cache
+                  cache-control: no-cache
+                  accept: application/json
+                  x-idtoken: eyJhbGciOiJSUzI1NiIsImtpZCI6IjI2OGNhNTBjZTY0YjQxYWIzNGZhMDM1NzIwMmQ5ZTk0ZTcyYmQ2ZWMiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiU3VkaGFudGEgU3VyeWFwdXRyYSIsImdyb3VwcyI6e30sImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9yazIwMTktcmsyMDE5IiwiYXVkIjoicmsyMDE5LXJrMjAxOSIsImF1dGhfdGltZSI6MTU2NjgwNzAwNCwidXNlcl9pZCI6Ijk4NDgxZGJhLTlmNjYtNDhmZi05NjY5LWQ3ZjkyODlhOWYyMSIsInN1YiI6Ijk4NDgxZGJhLTlmNjYtNDhmZi05NjY5LWQ3ZjkyODlhOWYyMSIsImlhdCI6MTU2Njk3NTYxOCwiZXhwIjoxNTY2OTc5MjE4LCJlbWFpbCI6InN1cnlhYmVqaWJ1bkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJzdXJ5YWJlamlidW5AZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoiY3VzdG9tIn19.34NgNoxs8nNzgZKHlU9ySOiUO6NFPzhXnZuXih71QHe9fkTgdCkl8BLk4frtn89zAztBc_gaQ-Wj_ho9F_-uOmfrizPw8dqcJFfHbcCVTr9i6GPgZUwpQHirtf4NGKG-mGT2BsiNXnbm1acoseT3B51ICFjgSoiJCdClLhmwDLZPZ-KtWcWtOgbSTg0wC1N__oK1rINUIk8l6cumiro1xnMJH5fk2Cs7MpNSh6iE8XraXUTN6Scp_ZaKqSNUqvCVI5Sm3COeroom4Gy10Yo3m_rtAu0tbaNQHK01P9Iv1E3PV8NXiJBL8UFlWe91Vn0Jh-oCQku_Bbi3WZPUiZErFw
+                  user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1
+                  sec-fetch-mode: cors
+                  content-type: application/json
+                  origin: http://localhost
+                  sec-fetch-site: cross-site
+                  referer: http://localhost/gk2019/?home
+                  accept-encoding: gzip, deflate, br
+                  accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6
+              --> quic_priority = 1
+              --> quic_stream_id = 11
+t=25 [st=24]  QUIC_SESSION_ACK_FRAME_SENT
+              --> delta_time_largest_observed_us = 2061
+              --> largest_observed = 6
+              --> missing_packets = []
+              --> received_packet_times = []
+t=25 [st=24]  QUIC_SESSION_STREAM_FRAME_SENT
+              --> fin = false
+              --> length = 56
+              --> offset = 1456
+              --> stream_id = 3
+t=25 [st=24]  QUIC_SESSION_PACKET_SENT
+              --> packet_number = 8
+              --> sent_time_us = 2087564700
+              --> size = 88
+              --> transmission_type = 0
+t=47 [st=46]  QUIC_SESSION_PACKET_RECEIVED
+              --> peer_address = "103.27.206.15:443"
+              --> self_address = "192.168.0.107:61508"
+              --> size = 1286
+t=47 [st=46]  QUIC_SESSION_UNAUTHENTICATED_PACKET_HEADER_RECEIVED
+              --> connection_id = "d0615aff573e9b92"
+              --> packet_number = 7
+              --> reset_flag = 0
+              --> version_flag = 0
+t=47 [st=46]  QUIC_SESSION_PACKET_AUTHENTICATED
+t=47 [st=46]  QUIC_SESSION_ACK_FRAME_RECEIVED
+              --> delta_time_largest_observed_us = 143
+              --> largest_observed = 8
+              --> missing_packets = []
+              --> received_packet_times = []
+t=47 [st=46]  QUIC_SESSION_STREAM_FRAME_RECEIVED
+              --> fin = false
+              --> length = 17
+              --> offset = 439
+              --> stream_id = 3
+t=47 [st=46]  QUIC_SESSION_STREAM_FRAME_RECEIVED
+              --> fin = true
+              --> length = 1236
+              --> offset = 0
+              --> stream_id = 11
+t=47 [st=46]  QUIC_CHROMIUM_CLIENT_STREAM_READ_RESPONSE_HEADERS
+              --> fin = true
+              --> :status: 404
+                  cache-control: private, no-cache, no-store, must-revalidate, max-age=0
+                  pragma: no-cache
+                  content-type: text/html
+                  content-length: 1236
+                  date: Wed, 28 Aug 2019 07:29:36 GMT
+                  server: LiteSpeed
+                  alt-svc: quic=":443"; ma=2592000; v="39,43,46", h3-22=":443"; ma=2592000
+              --> quic_stream_id = 11
+t=73 [st=72]  QUIC_SESSION_ACK_FRAME_SENT
+              --> delta_time_largest_observed_us = 25537
+              --> largest_observed = 7
+              --> missing_packets = []
+              --> received_packet_times = []
+t=73 [st=72]  QUIC_SESSION_PACKET_SENT
+              --> packet_number = 9
+              --> sent_time_us = 2087612071
+              --> size = 28
+              --> transmission_type = 0
