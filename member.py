@@ -235,6 +235,9 @@ class Member(Resource):
 
         mysqlCon.db.commit()
 
+        if target == fbc.uid:
+            return Group().get()
+
         return self.get(gid)
 
     def get(self, gid):
