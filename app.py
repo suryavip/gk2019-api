@@ -17,6 +17,8 @@ from opinion import Opinion
 from attachment import TempAttachment, Attachment
 from profile_pic import SelfProfilePic, ProfilePic
 
+import time
+
 app = Flask(__name__, static_url_path='')
 app.secret_key = PrivateConfig.flaskSecretKey
 api = Api(app)
@@ -36,6 +38,11 @@ def after_request(response):
     response.headers["Access-Control-Allow-Origin"] = requesterOrigin
     response.headers["Access-Control-Allow-Headers"] = "Accept, Accept-Language, Content-Language, Content-Type, X-idToken, X-timestamp"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+
+    '''requestMethod = request.environ.get('REQUEST_METHOD')
+    if requestMethod == 'OPTIONS':
+        time.sleep(0.5)'''
+
     return response
 
 
