@@ -39,9 +39,9 @@ def after_request(response):
     response.headers["Access-Control-Allow-Headers"] = "Accept, Accept-Language, Content-Language, Content-Type, X-idToken, X-timestamp"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
 
-    '''requestMethod = request.environ.get('REQUEST_METHOD')
+    requestMethod = request.environ.get('REQUEST_METHOD')
     if requestMethod == 'OPTIONS':
-        time.sleep(0.5)'''
+        time.sleep(0.5)
 
     return response
 
