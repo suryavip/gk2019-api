@@ -149,7 +149,7 @@ class Assignment(Resource):
 
         return self.get(owner)
 
-    def delete(self, owner):  # cancel pending, delete member or delete admin
+    def delete(self, owner):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
