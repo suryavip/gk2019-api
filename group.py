@@ -110,12 +110,15 @@ class Group(Resource):
             'SELECT groupdata.groupId, name, school, level FROM groupdata JOIN memberdata ON groupdata.groupId = memberdata.groupId WHERE memberdata.userId = %s',
             (fbc.uid,)
         )
-        return [{
-            'groupId': groupId,
-            'name': name,
-            'school': school,
-            'level': level,
-        } for (groupId, name, school, level) in group]
+        return {
+            'channel': 'group',
+            'data': [{
+                'groupId': groupId,
+                'name': name,
+                'school': school,
+                'level': level,
+            } for (groupId, name, school, level) in group],
+        }
 
 
 class GroupInfo(Resource):

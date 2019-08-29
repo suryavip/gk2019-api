@@ -22,4 +22,7 @@ class Notification(Resource):
             'data': json.loads(notifData),
         } for (notifType, notifTime, notifData) in notif]
 
-        return result
+        return {
+            'channel': 'notification',
+            'data': result,
+        }

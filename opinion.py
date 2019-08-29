@@ -72,4 +72,7 @@ class Opinion(Resource):
                 'checked': checked,
             })
 
-        return result
+        return {
+            'channel': 'opinion',
+            'data': result,
+        }

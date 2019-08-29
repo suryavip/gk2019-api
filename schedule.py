@@ -108,4 +108,7 @@ class Schedule(Resource):
                 'data': json.loads(data),
             })
 
-        return result
+        return {
+            'channel': 'schedule/{}'.format(owner),
+            'data': result,
+        }

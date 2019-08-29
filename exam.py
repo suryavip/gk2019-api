@@ -265,4 +265,7 @@ class Exam(Resource):
 
         result = [preResult[examId] for examId in preResult]
 
-        return result
+        return {
+            'channel': 'exam/{}'.format(owner),
+            'data': result,
+        }

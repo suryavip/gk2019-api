@@ -254,4 +254,7 @@ class Assignment(Resource):
 
         result = [preResult[assignmentId] for assignmentId in preResult]
 
-        return result
+        return {
+            'channel': 'assignment/{}'.format(owner),
+            'data': result,
+        }

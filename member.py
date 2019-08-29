@@ -257,4 +257,7 @@ class Member(Resource):
                 'level': i['level'],
             })
 
-        return result
+        return {
+            'channel': 'member/{}'.format(gid),
+            'data': result,
+        }
