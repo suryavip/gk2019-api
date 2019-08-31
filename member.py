@@ -231,7 +231,12 @@ class Member(Resource):
                 tag='admin-delete-{}'.format(gid),
             )
 
-        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate, toClear=['poke/{}/member/{}'.format(target, gid)])
+        fbc.updateRDBTimestamp(args['X-timestamp'], rdbPathUpdate, toClear=[
+            'poke/{}/member/{}'.format(target, gid),
+            'poke/{}/schedule/{}'.format(target, gid),
+            'poke/{}/assignment/{}'.format(target, gid),
+            'poke/{}/exam/{}'.format(target, gid),
+        ])
 
         mysqlCon.db.commit()
 
