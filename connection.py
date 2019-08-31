@@ -2,7 +2,6 @@ from flask_restful import abort
 from firebase_admin import db, auth
 from privateConfig import PrivateConfig
 import mysql.connector
-import threading
 import socket
 hostname = socket.gethostname()
 
@@ -29,10 +28,8 @@ class FirebaseCon:
         for i in toClear:
             rdbUpdate[i] = None
 
-        def doWork():
-            ref = self.db.reference('')
-            ref.update(rdbUpdate)
-        threading.Thread(target=doWork, args=[]).start()
+        ref = self.db.reference('')
+        ref.update(rdbUpdate)
 
 
 class MysqlCon:
