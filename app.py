@@ -41,7 +41,7 @@ def after_request(response):
 
     requestMethod = request.environ.get('REQUEST_METHOD')
     if requestMethod == 'OPTIONS':
-        time.sleep(0.5)
+        time.sleep(1)
 
     return response
 
