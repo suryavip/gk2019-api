@@ -20,11 +20,14 @@ class FirebaseCon:
         self.db = db
         self.auth = auth
 
-    def updateRDBTimestamp(self, t, paths):
+    def updateRDBTimestamp(self, t, paths, toClear=[]):
         # paths is list
         rdbUpdate = {}
         for i in paths:
             rdbUpdate[i] = t
+
+        for i in toClear:
+            rdbUpdate[i] = None
 
         def doWork():
             ref = self.db.reference('')
