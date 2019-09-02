@@ -4,6 +4,8 @@ from connection import FirebaseCon, MysqlCon
 
 from sendNotification import SendNotification
 
+from datetime import datetime
+
 
 class FCMToken(Resource):
     def post(self):
@@ -28,6 +30,7 @@ class FCMToken(Resource):
             'deviceVersion': args['deviceVersion'],
             'appVersion': args['appVersion'],
             'clientLanguage': args['clientLanguage'],
+            'lastReported': datetime.now(),
         }], updateOnDuplicate=True)
 
         if args['old'] != '':
