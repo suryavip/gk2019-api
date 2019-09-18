@@ -5,6 +5,7 @@ from privateConfig import PrivateConfig
 
 from user import User, Profiles
 from fcmToken import FCMToken
+from feedback import Feedback
 from maintenance import CleanUp
 
 from group import Group, GroupInfo
@@ -60,6 +61,8 @@ api.add_resource(Profiles, '/profiles')
 api.add_resource(GroupInfo, '/groupInfo/<string:gid>')
 
 api.add_resource(FCMToken, '/fcmToken')
+
+api.add_resource(Feedback, '/feedback')
 
 api.add_resource(TempAttachment, '/storage/attachment')
 api.add_resource(Attachment, '/storage/attachment/<string:aid>')

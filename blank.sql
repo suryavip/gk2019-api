@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Waktu pembuatan: 24 Agu 2019 pada 15.05
+-- Waktu pembuatan: 18 Sep 2019 pada 23.30
 -- Versi server: 10.1.41-MariaDB-cll-lve
 -- Versi PHP: 7.2.7
 
@@ -81,6 +81,25 @@ CREATE TABLE `fcmtoken` (
   `userId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `clientLanguage` varchar(2) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'id',
   `lastReported` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deviceModel` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `devicePlatform` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `deviceVersion` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `appVersion` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `feedback`
+--
+
+CREATE TABLE `feedback` (
+  `feedbackId` int(11) NOT NULL,
+  `userId` varchar(191) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `liked` tinyint(1) NOT NULL,
+  `suggestion` text COLLATE utf8mb4_unicode_520_ci,
+  `submitTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `clientLanguage` varchar(2) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'id',
   `deviceModel` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `devicePlatform` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `deviceVersion` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
@@ -206,6 +225,13 @@ ALTER TABLE `fcmtoken`
   ADD KEY `userId` (`userId`);
 
 --
+-- Indeks untuk tabel `feedback`
+--
+ALTER TABLE `feedback`
+  ADD PRIMARY KEY (`feedbackId`),
+  ADD KEY `userId` (`userId`);
+
+--
 -- Indeks untuk tabel `groupdata`
 --
 ALTER TABLE `groupdata`
@@ -250,6 +276,16 @@ ALTER TABLE `userdata`
   ADD PRIMARY KEY (`userId`);
 
 --
+-- AUTO_INCREMENT untuk tabel yang dibuang
+--
+
+--
+-- AUTO_INCREMENT untuk tabel `feedback`
+--
+ALTER TABLE `feedback`
+  MODIFY `feedbackId` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
@@ -272,6 +308,12 @@ ALTER TABLE `examdata`
 --
 ALTER TABLE `fcmtoken`
   ADD CONSTRAINT `fcmToken_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `userdata` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `feedback`
+--
+ALTER TABLE `feedback`
+  ADD CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `userdata` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `memberdata`
