@@ -11,7 +11,6 @@ class Feedback(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
         parser.add_argument('liked', type=bool ,required=True, help='liked')
-        parser.add_argument('suggestion')
         parser.add_argument('deviceModel')
         parser.add_argument('devicePlatform')
         parser.add_argument('deviceVersion')
@@ -23,7 +22,6 @@ class Feedback(Resource):
         mysqlCon.insertQuery('feedback', [{
             'userId': fbc.uid,
             'liked': args['liked'],
-            'suggestion': args['suggestion'],
             'submitTime': datetime.now(),
             'clientLanguage': args['clientLanguage'],
             'deviceModel': args['deviceModel'],
@@ -35,3 +33,20 @@ class Feedback(Resource):
         mysqlCon.db.commit()
 
         return {}, 201
+
+    def put(self):
+        mysqlCon = MysqlCon()
+        parser = reqparse.RequestParser()
+        parser.add_argument('X-idToken', required=True, help='a', location='headers')
+        parser.add_argument('suggestion')
+        args = parser.parse_args()
+        fbc = FirebaseCon(args['X-idToken'])
+
+        mysqlCon.wQuery(
+            'UPDATE groupdata SET name = %s, school = %s WHERE groupId = %s',
+            (args['suggestion'], fbc.uid)
+        )
+
+        mysqlCon.db.commit()
+
+        return {}
