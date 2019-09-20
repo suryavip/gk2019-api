@@ -36,18 +36,18 @@ class Feedback(Resource):
 
         return {}, 201
 
-    def get(self):
+class Feedbacks(Resource):
+    def get(self, appVersion):
         # client should decide is it time to ask for feedback, then call this to check if user already give feedback for this version
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
-        parser.add_argument('appVersion', required=True)
         args = parser.parse_args()
         fbc = FirebaseCon(args['X-idToken'])
 
         feedback = mysqlCon.rQuery(
             'SELECT appVersion FROM feedback WHERE userId = %s AND appVersion = %s',
-            (fbc.uid, args['appVersion'])
+            (fbc.uid, appVersion)
         )
 
         return {
