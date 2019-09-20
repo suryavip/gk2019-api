@@ -50,4 +50,6 @@ class Feedback(Resource):
             (fbc.uid, args['appVersion'])
         )
 
-        return len(feedback) > 0
+        return {
+            'exist': len(feedback) > 0
+        }
