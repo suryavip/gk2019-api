@@ -12,17 +12,17 @@ class Opinion(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
         parser.add_argument('X-timestamp', required=True, type=int, location='headers')
-        parser.add_argument('assignmentId')
-        parser.add_argument('examId')
+        parser.add_argument('assignmentId', default=None)
+        parser.add_argument('examId', default=None)
         parser.add_argument('checked', default=False, type=bool)
         args = parser.parse_args()
 
         fbc = FirebaseCon(args['X-idToken'])
 
         # check parent id is not null
-        if 'assignmentId' in args:
+        if args['assignmentId'] != None:
             parentCol = 'assignmentId'
-        elif 'examId' in args:
+        elif args['examId'] != None:
             parentCol = 'examId'
         else:
             abort(400, code='assignmentId or examId is required')
@@ -64,8 +64,10 @@ class Opinion(Resource):
         for (assignmentId, examId, checked) in opinion:
             if assignmentId != None:
                 parentId = assignmentId
-            else:
+            elif examId != None:
                 parentId = examId
+            else:
+                continue
 
             result.append({
                 'parentId': parentId,
