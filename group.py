@@ -45,7 +45,7 @@ class Group(Resource):
 
         mysqlCon.db.commit()
 
-        return self.get(), 201
+        return self.get(newGID=gid), 201
 
     def put(self):
         mysqlCon = MysqlCon()
@@ -98,7 +98,7 @@ class Group(Resource):
 
     # there is no DELETE method because group will be deleted once there is no member/admin
 
-    def get(self):
+    def get(self, newGID=None):
         mysqlCon = MysqlCon()
         parser = reqparse.RequestParser()
         parser.add_argument('X-idToken', required=True, help='a', location='headers')
@@ -112,6 +112,7 @@ class Group(Resource):
         )
         return {
             'channel': 'group',
+            'newGroupId': newGID,
             'data': [{
                 'groupId': groupId,
                 'name': name,
