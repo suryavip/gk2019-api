@@ -1,6 +1,15 @@
 privateConfig.py
 pythonAdminSDKPrivateKey.json
 
+deletedUser/*
+!deletedUser/placeholder.txt
+maintenance-log/*
+!maintenance-log/placeholder.txt
+storage/attachment/*
+!storage/attachment/placeholder.txt
+storage/profile_pic/*
+!storage/profile_pic/placeholder.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
