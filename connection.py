@@ -12,10 +12,8 @@ class FirebaseCon:
             try:
                 self.decoded_token = auth.verify_id_token(idToken, check_revoked=True)
                 self.uid = self.decoded_token['uid']
-            except auth.AuthError as err:
-                abort(401, code='Token-{}'.format(err.code), message='{}'.format(err))
-            except ValueError as err:
-                abort(400, code='Token-ValueError', message='{}'.format(err))
+            except:
+                abort(400, code='Token-error')
         self.db = db
         self.auth = auth
 

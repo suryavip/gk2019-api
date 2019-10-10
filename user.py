@@ -36,10 +36,8 @@ class User(Resource):
                 email=args['email'],
                 password=args['password'],
             )
-        except fbc.auth.AuthError as err:
-            abort(400, code='{}'.format(err.code), message='{}'.format(err))
-        except ValueError as err:
-            abort(400, code='ValueError', message='{}'.format(err))
+        except:
+            abort(400, code='RegistError')
 
         mysqlCon.db.commit()
 
@@ -59,10 +57,8 @@ class User(Resource):
 
         try:
             fbc.auth.update_user(fbc.uid, display_name=args['name'])
-        except fbc.auth.AuthError as err:
-            abort(400, code='{}'.format(err.code), message='{}'.format(err))
-        except ValueError as err:
-            abort(400, code='ValueError', message='{}'.format(err))
+        except:
+            abort(400, code='UpdateError')
 
         mysqlCon.db.commit()
 
