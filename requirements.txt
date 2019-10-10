@@ -1,0 +1,3 @@
+flask-RESTful==0.3.7
+firebase-admin==3.0.0
+mysql-connector-python==8.0.17
