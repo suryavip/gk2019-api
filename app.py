@@ -18,6 +18,8 @@ from opinion import Opinion
 from attachment import TempAttachment, Attachment
 from profile_pic import SelfProfilePic, ProfilePic
 
+from connection import MysqlCon, FirebaseCon
+
 import time
 
 app = Flask(__name__, static_url_path='')
@@ -49,7 +51,9 @@ def after_request(response):
 
 class Test(Resource):
     def get(self):
-        return {'hello': 'World'}
+        MysqlCon()
+        FirebaseCon()
+        return {'hello': 'World, Firebase and MySQL connected!'}
 
 
 api.add_resource(Test, '/test')
