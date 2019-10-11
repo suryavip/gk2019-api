@@ -37,7 +37,9 @@ class MysqlCon:
                 host='boostedcode.com',
                 user='boostedc_gk2019',
                 password=PrivateConfig.mysqlPassword,
-                database='boostedc_gk2019'
+                database='boostedc_gk2019',
+                connection_timeout=10,
+                unix_socket='/tmp/mysql.sock'
             )
         else:
             self.db = mysql.connector.connect(
